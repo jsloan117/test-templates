@@ -1,0 +1,13 @@
+---
+name: calling workflow
+run-name: run name for calling workflow
+
+on: push
+
+jobs:
+  reusable_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test workflow
+        uses: ./.github/workflows/test-template.yml
+
