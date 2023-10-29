@@ -11,7 +11,7 @@ on:
     inputs:
       file:
         description: Dockerfile to build, relative to context path
-        default: ./Dockerfile
+        default: Dockerfile
         required: false
         type: string
 
