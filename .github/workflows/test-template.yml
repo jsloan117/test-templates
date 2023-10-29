@@ -9,24 +9,9 @@ on:
   workflow_call:
     # allow reuse of this workflow in other repos
     inputs:
-      context:
-        description: Docker context (path) to start build from
-        default: .
-        required: false
-        type: string
-
       file:
         description: Dockerfile to build, relative to context path
         default: Dockerfile
-        required: false
-        type: string
-
-      flavor:
-        # https://github.com/marketplace/actions/docker-metadata-action#flavor-input
-        description: Three rules to (optionally) set for tag-rules, latest, prefix, and suffix
-        # will tag latest on a git tag push, or if you add a type=semver or type=match tag-rules
-        # NOTE: if you are seeing `latest` retagged when you don't expect it, set this latest=false
-        default: latest=auto
         required: false
         type: string
 
@@ -37,84 +22,6 @@ on:
           ghcr.io/${{ github.repository }}
         required: false
         type: string
-
-      platforms:
-        # https://github.com/marketplace/actions/build-and-push-docker-images#inputs
-        # https://docs.docker.com/engine/reference/commandline/buildx_build/#platform
-        description: Platforms to build for
-        # common ones: linux/amd64,linux/arm64,linux/arm/v7
-        default: linux/amd64
-        required: false
-        type: string
-
-      push:
-        description: Push image to registry(s)
-        default: true
-        required: false
-        type: boolean
-
-      tags:
-        # https://github.com/marketplace/actions/docker-metadata-action#tags-input
-        description: Use docker-metadata action to create tags from a key-value pair list in CSV format
-        default: |
-          type=semver,pattern={{version}},enable={{is_default_branch}}
-          type=semver,pattern={{major}}.{{minor}},enable={{is_default_branch}}
-          type=semver,pattern={{major}},enable={{is_default_branch}}
-          type=ref,event=branch
-          type=ref,event=pr
-        required: false
-        type: string
-
-      target:
-        description: Build stage to target
-        required: false
-        type: string
-
-      dockerhub-enable:
-        description: Log into Docker Hub
-        default: false
-        required: false
-        type: boolean
-
-      ghcr-enable:
-        description: Log into GHCR
-        default: true
-        required: false
-        type: boolean
-
-      # https://docs.docker.com/build/attestations/slsa-provenance/
-      provenance:
-        description: Generate provenance attestation for the build
-        default: true
-        required: false
-        type: boolean
-
-      # https://docs.docker.com/build/attestations/sbom/
-      sbom:
-        description: Generate SBOM attestation for the build
-        default: true
-        required: false
-        type: boolean
-
-      build-args:
-        description: Docker build arguments
-        default: ''
-        required: false
-        type: string
-
-    secrets:
-      dockerhub-username:
-        description: Docker Hub username
-        required: false
-      dockerhub-token:
-        description: Docker Hub token
-        required: false
-      cosign-key:
-        description: Cosign private key
-        required: false
-      cosign-password:
-        description: Cosign private key password
-        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

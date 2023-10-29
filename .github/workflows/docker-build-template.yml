@@ -1,213 +1,213 @@
----
-# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
-# https://docs.github.com/en/actions/learn-github-actions/contexts
+# ---
+# # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+# # https://docs.github.com/en/actions/learn-github-actions/contexts
 
-name: name of workflow
-run-name: name of run
+# name: name of workflow
+# run-name: name of run
 
-on:
-  workflow_call:
-    # allow reuse of this workflow in other repos
-    inputs:
-      context:
-        description: Docker context (path) to start build from
-        default: .
-        required: false
-        type: string
+# on:
+#   workflow_call:
+#     # allow reuse of this workflow in other repos
+#     inputs:
+#       context:
+#         description: Docker context (path) to start build from
+#         default: .
+#         required: false
+#         type: string
 
-      file:
-        description: Dockerfile to build, relative to context path
-        default: Dockerfile
-        required: false
-        type: string
+#       file:
+#         description: Dockerfile to build, relative to context path
+#         default: Dockerfile
+#         required: false
+#         type: string
 
-      flavor:
-        # https://github.com/marketplace/actions/docker-metadata-action#flavor-input
-        description: Three rules to (optionally) set for tag-rules, latest, prefix, and suffix
-        # will tag latest on a git tag push, or if you add a type=semver or type=match tag-rules
-        # NOTE: if you are seeing `latest` retagged when you don't expect it, set this latest=false
-        default: latest=auto
-        required: false
-        type: string
+#       flavor:
+#         # https://github.com/marketplace/actions/docker-metadata-action#flavor-input
+#         description: Three rules to (optionally) set for tag-rules, latest, prefix, and suffix
+#         # will tag latest on a git tag push, or if you add a type=semver or type=match tag-rules
+#         # NOTE: if you are seeing `latest` retagged when you don't expect it, set this latest=false
+#         default: latest=auto
+#         required: false
+#         type: string
 
-      images:
-        description: A list of the account/repo names for docker build to push to
-        default: |
-          ${{ github.repository }}
-          ghcr.io/${{ github.repository }}
-        required: false
-        type: string
+#       images:
+#         description: A list of the account/repo names for docker build to push to
+#         default: |
+#           ${{ github.repository }}
+#           ghcr.io/${{ github.repository }}
+#         required: false
+#         type: string
 
-      platforms:
-        # https://github.com/marketplace/actions/build-and-push-docker-images#inputs
-        # https://docs.docker.com/engine/reference/commandline/buildx_build/#platform
-        description: Platforms to build for
-        # common ones: linux/amd64,linux/arm64,linux/arm/v7
-        default: linux/amd64
-        required: false
-        type: string
+#       platforms:
+#         # https://github.com/marketplace/actions/build-and-push-docker-images#inputs
+#         # https://docs.docker.com/engine/reference/commandline/buildx_build/#platform
+#         description: Platforms to build for
+#         # common ones: linux/amd64,linux/arm64,linux/arm/v7
+#         default: linux/amd64
+#         required: false
+#         type: string
 
-      push:
-        description: Push image to registry(s)
-        default: true
-        required: false
-        type: boolean
+#       push:
+#         description: Push image to registry(s)
+#         default: true
+#         required: false
+#         type: boolean
 
-      tags:
-        # https://github.com/marketplace/actions/docker-metadata-action#tags-input
-        description: Use docker-metadata action to create tags from a key-value pair list in CSV format
-        default: |
-          type=semver,pattern={{version}},enable={{is_default_branch}}
-          type=semver,pattern={{major}}.{{minor}},enable={{is_default_branch}}
-          type=semver,pattern={{major}},enable={{is_default_branch}}
-          type=ref,event=branch
-          type=ref,event=pr
-        required: false
-        type: string
+#       tags:
+#         # https://github.com/marketplace/actions/docker-metadata-action#tags-input
+#         description: Use docker-metadata action to create tags from a key-value pair list in CSV format
+#         default: |
+#           type=semver,pattern={{version}},enable={{is_default_branch}}
+#           type=semver,pattern={{major}}.{{minor}},enable={{is_default_branch}}
+#           type=semver,pattern={{major}},enable={{is_default_branch}}
+#           type=ref,event=branch
+#           type=ref,event=pr
+#         required: false
+#         type: string
 
-      target:
-        description: Build stage to target
-        required: false
-        type: string
+#       target:
+#         description: Build stage to target
+#         required: false
+#         type: string
 
-      dockerhub-enable:
-        description: Log into Docker Hub
-        default: false
-        required: false
-        type: boolean
+#       dockerhub-enable:
+#         description: Log into Docker Hub
+#         default: false
+#         required: false
+#         type: boolean
 
-      ghcr-enable:
-        description: Log into GHCR
-        default: true
-        required: false
-        type: boolean
+#       ghcr-enable:
+#         description: Log into GHCR
+#         default: true
+#         required: false
+#         type: boolean
 
-      # https://docs.docker.com/build/attestations/slsa-provenance/
-      provenance:
-        description: Generate provenance attestation for the build
-        default: true
-        required: false
-        type: boolean
+#       # https://docs.docker.com/build/attestations/slsa-provenance/
+#       provenance:
+#         description: Generate provenance attestation for the build
+#         default: true
+#         required: false
+#         type: boolean
 
-      # https://docs.docker.com/build/attestations/sbom/
-      sbom:
-        description: Generate SBOM attestation for the build
-        default: true
-        required: false
-        type: boolean
+#       # https://docs.docker.com/build/attestations/sbom/
+#       sbom:
+#         description: Generate SBOM attestation for the build
+#         default: true
+#         required: false
+#         type: boolean
 
-      build-args:
-        description: Docker build arguments
-        default: ''
-        required: false
-        type: string
+#       build-args:
+#         description: Docker build arguments
+#         default: ''
+#         required: false
+#         type: string
 
-    secrets:
-      dockerhub-username:
-        description: Docker Hub username
-        required: false
-      dockerhub-token:
-        description: Docker Hub token
-        required: false
-      cosign-key:
-        description: Cosign private key
-        required: false
-      cosign-password:
-        description: Cosign private key password
-        required: false
+#     secrets:
+#       dockerhub-username:
+#         description: Docker Hub username
+#         required: false
+#       dockerhub-token:
+#         description: Docker Hub token
+#         required: false
+#       cosign-key:
+#         description: Cosign private key
+#         required: false
+#       cosign-password:
+#         description: Cosign private key password
+#         required: false
 
-    # outputs:
-    #   image-tag:
-    #     description: "single-use image tag for GHA runs"
-    #     value: ${{ jobs.build.outputs.image-tag }}
+#     # outputs:
+#     #   image-tag:
+#     #     description: "single-use image tag for GHA runs"
+#     #     value: ${{ jobs.build.outputs.image-tag }}
 
-# set permissions here for what's required to run this Reusable Workflow
-# However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
-# Calling permissions must be equal to or greater than these reusable permissions for it to work
-# https://docs.github.com/en/actions/using-workflows/reusing-workflows#supported-keywords-for-jobs-that-call-a-reusable-workflow
+# # set permissions here for what's required to run this Reusable Workflow
+# # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
+# # Calling permissions must be equal to or greater than these reusable permissions for it to work
+# # https://docs.github.com/en/actions/using-workflows/reusing-workflows#supported-keywords-for-jobs-that-call-a-reusable-workflow
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
 
-permissions: {}
+# permissions: {}
 
-jobs:
-  build:
-    name: job name
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      # id-token: write
+# jobs:
+#   build:
+#     name: job name
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+#       # id-token: write
 
-    steps:
-      # https://github.com/marketplace/actions/checkout
-      - name: Checkout
-        uses: actions/checkout@v4
+#     steps:
+#       # https://github.com/marketplace/actions/checkout
+#       - name: Checkout
+#         uses: actions/checkout@v4
 
-      # https://github.com/marketplace/actions/cosign-installer
-      - name: Install Cosign
-        # don't install on prs
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.1.2
+#       # https://github.com/marketplace/actions/cosign-installer
+#       - name: Install Cosign
+#         # don't install on prs
+#         if: github.event_name != 'pull_request'
+#         uses: sigstore/cosign-installer@v3.1.2
 
-      # https://github.com/marketplace/actions/docker-setup-qemu
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3.0.0
+#       # https://github.com/marketplace/actions/docker-setup-qemu
+#       - name: Set up QEMU
+#         uses: docker/setup-qemu-action@v3.0.0
 
-      # https://github.com/marketplace/actions/docker-setup-buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
-        with:
-          install: true
-          version: latest
+#       # https://github.com/marketplace/actions/docker-setup-buildx
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3.0.0
+#         with:
+#           install: true
+#           version: latest
 
-      # https://github.com/marketplace/actions/docker-metadata-action
-      - name: Docker Metadata
-        uses: docker/metadata-action@v5.0.0
-        id: meta
-        with:
-          images: ${{ inputs.images }}
-          flavor: ${{ inputs.flavor }}
-          tags: ${{ inputs.tags }}
+#       # https://github.com/marketplace/actions/docker-metadata-action
+#       - name: Docker Metadata
+#         uses: docker/metadata-action@v5.0.0
+#         id: meta
+#         with:
+#           images: ${{ inputs.images }}
+#           flavor: ${{ inputs.flavor }}
+#           tags: ${{ inputs.tags }}
 
-      # https://github.com/marketplace/actions/docker-login
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request' && inputs.dockerhub-enable
-        uses: docker/login-action@v3.0.0
-        with:
-          username: ${{ secrets.dockerhub-username }}
-          password: ${{ secrets.dockerhub-token }}
+#       # https://github.com/marketplace/actions/docker-login
+#       - name: Login to DockerHub
+#         if: github.event_name != 'pull_request' && inputs.dockerhub-enable
+#         uses: docker/login-action@v3.0.0
+#         with:
+#           username: ${{ secrets.dockerhub-username }}
+#           password: ${{ secrets.dockerhub-token }}
 
-      # https://github.com/marketplace/actions/docker-login
-      - name: Login to GHCR
-        if: github.event_name != 'pull_request' && inputs.ghcr-enable
-        uses: docker/login-action@v3.0.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#       # https://github.com/marketplace/actions/docker-login
+#       - name: Login to GHCR
+#         if: github.event_name != 'pull_request' && inputs.ghcr-enable
+#         uses: docker/login-action@v3.0.0
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # https://github.com/marketplace/actions/build-and-push-docker-images
-      - name: Build and push
-        uses: docker/build-push-action@v5.0.0
-        id: build
-        with:
-          file: ${{ inputs.file }}
-          platforms: ${{ inputs.platforms }}
-          build-args: ${{ inputs.build-args }}
-          push: ${{ github.event_name != 'pull_request' && inputs.push }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ github.workflow }}
-          cache-to: type=gha,mode=max,scope=${{ github.workflow }}
-          provenance: ${{ inputs.provenance }}
-          sbom: ${{ inputs.sbom }}
+#       # https://github.com/marketplace/actions/build-and-push-docker-images
+#       - name: Build and push
+#         uses: docker/build-push-action@v5.0.0
+#         id: build
+#         with:
+#           file: ${{ inputs.file }}
+#           platforms: ${{ inputs.platforms }}
+#           build-args: ${{ inputs.build-args }}
+#           push: ${{ github.event_name != 'pull_request' && inputs.push }}
+#           tags: ${{ steps.meta.outputs.tags }}
+#           labels: ${{ steps.meta.outputs.labels }}
+#           cache-from: type=gha,scope=${{ github.workflow }}
+#           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
+#           provenance: ${{ inputs.provenance }}
+#           sbom: ${{ inputs.sbom }}
 
-      - name: loop
-        run: |
-          for image in ${{ inputs.images }}; do
-            echo ${image}
-          done
+#       - name: loop
+#         run: |
+#           for image in ${{ inputs.images }}; do
+#             echo ${image}
+#           done
 
