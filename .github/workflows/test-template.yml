@@ -43,7 +43,7 @@ jobs:
 
       - name: loop
         run: |
-          for x in ${{ inputs.images}}; do
+          IFS=$'\n' for x in ${{ inputs.images}}; do
             ehco ${x}
           done
 
