@@ -44,5 +44,5 @@ jobs:
       - name: loop
         run: |
           echo ${{ inputs.file }}
-          ehco ${{ inputs.images }}
+          echo ${{ inputs.images }}
 
