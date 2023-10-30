@@ -43,8 +43,8 @@ jobs:
 
       - name: loop
         run: |
-          # IFS=$'\n' read -a image_names <<< "${{ inputs.images }}"
-          read -rd '' -a image_names <<< "${{ inputs.images }}"
+          # IFS=$'\n' read -rd '' -a image_names <<< "${{ inputs.images }}"
+          read -a image_names <<< "${{ inputs.images }}"
           for image in "${image_names[@]}"; do
             echo ${image}
           done
