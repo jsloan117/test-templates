@@ -43,5 +43,7 @@ jobs:
 
       - name: loop
         run: |
-          echo ${{ inputs.images }}
+          for x in ${{ inputs.images}}; do
+            ehco ${x}
+          done
 
