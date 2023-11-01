@@ -45,4 +45,9 @@ jobs:
         run: |
           echo ${{ inputs.file }}
           echo "${{ inputs.images }}"
+          # x="${{ inputs.images }}"
+          read -d'' -a images <<< "${{ inputs.images }}"
+          for image in "${images[@]}"; do
+            echo ${image}
+          done
 
