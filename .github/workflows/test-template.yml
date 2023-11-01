@@ -47,7 +47,7 @@ jobs:
           echo "${{ inputs.images }}"
           x="${{ inputs.images }}"
           echo -e '\n\n\n'
-          echo "${x}"
+          echo "${x}" > images.txt
           # IFS=$'\n' read -d'' -a images <<< "${x}"
           # for image in "${images[@]}"; do
           #   echo "${image}"
