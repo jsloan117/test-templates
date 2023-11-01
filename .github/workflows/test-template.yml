@@ -17,9 +17,7 @@ on:
 
       images:
         description: A list of the account/repo names for docker build to push to
-        default: |-
-          ${{ github.repository }}
-          ghcr.io/${{ github.repository }}
+        default: ${{ github.repository }}, ghcr.io/${{ github.repository }}
         required: false
         type: string
 
@@ -41,20 +39,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: split image names
-        id: split-images
-        shell: bash
-        run: |
-          # Split the input into an array
-          IFS=$'\n' read -d '' image_names <<< "${{ inputs.images }}"
-          echo "name=image_names::${image_names[@]}" >> ${GITHUB_OUTPUT}
+      # - name: split image names
+      #   id: split-images
+      #   shell: bash
+      #   run: |
+      #     # Split the input into an array
+      #     IFS=$'\n' read -d '' image_names <<< "${{ inputs.images }}"
+      #     echo "name=image_names::${image_names[@]}" >> ${GITHUB_OUTPUT}
 
       - name: loop
         run: |
           image_names=("${{ steps.split-images.outputs.image_names }}")
           echo ${{ inputs.file }}
           echo ${{ inputs.images }}
-          for image_name in "${image_names[@]}"; do
-            echo "Building and pushing image: $image_name"
+          for image in "${{ inputs.images }}"; do
+            echo "Building and pushing image: $image"
           done
 
