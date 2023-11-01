@@ -44,9 +44,10 @@ jobs:
       - name: loop
         run: |
           echo ${{ inputs.file }}
-          echo "${{ inputs.images }}" >> images.txt
-          cat images.txt
-          # x="${{ inputs.images }}"
+          echo "${{ inputs.images }}"
+          x="${{ inputs.images }}"
+          echo -e '\n\n\n'
+          echo "${x}"
           # IFS=$'\n' read -d'' -a images <<< "${x}"
           # for image in "${images[@]}"; do
           #   echo "${image}"
