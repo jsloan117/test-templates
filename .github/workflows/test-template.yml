@@ -17,7 +17,7 @@ on:
 
       images:
         description: A list of the account/repo names for docker build to push to
-        default: |
+        default: |-
           ${{ github.repository }}
           ghcr.io/${{ github.repository }}
         required: false
@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           # Split the input into an array
-          IFS=$'\n' read -rd '' -a image_names <<< "${{ inputs.images }}"
+          IFS=$'\n' read -d '' image_names <<< "${{ inputs.images }}"
           echo "name=image_names::${image_names[@]}" >> ${GITHUB_OUTPUT}
 
       - name: loop
