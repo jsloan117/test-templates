@@ -205,9 +205,17 @@ jobs:
           provenance: ${{ inputs.provenance }}
           sbom: ${{ inputs.sbom }}
 
-      - name: loop
+      - name: Sign Image
         run: |
-          for image in ${{ inputs.images }}; do
-            echo ${image}
-          done
+          cosign sign -y --key env://COSIGN_KEY --recursive \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -a "ref=${{ github.ref_name }}" \
+            ${TAGS}@${DIGEST}
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+          COSIGN_KEY: ${{ secrets.cosign-key }}
+          COSIGN_PASSWORD: ${{ secrets.cosign-password }}
 

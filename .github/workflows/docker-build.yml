@@ -1,0 +1,22 @@
+---
+name: calling workflow
+run-name: run name for calling workflow
+
+on: push
+
+jobs:
+  reusable_job:
+    name: build container
+    uses: ./.github/workflows/docker-build-template.yml
+    secrets:
+      dockerhub-username: ${{ github.actor }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+      cosign-key: ${{ secrets.COSIGN_KEY }}
+      cosign-password: ${{ secrets.COSIGN_KEYPASS }}
+    with:
+      images: ghcr.io/${{ github.repository }}
+      build-args: |
+        BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+        VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+        REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+
