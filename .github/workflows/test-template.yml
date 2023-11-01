@@ -48,6 +48,6 @@ jobs:
           # x="${{ inputs.images }}"
           read -d'' -a images <<< "${{ inputs.images }}"
           for image in "${images[@]}"; do
-            echo ${image}
+            echo "${image}"
           done
 
