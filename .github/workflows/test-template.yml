@@ -61,7 +61,10 @@ jobs:
           # DIGEST: ${{ steps.meta.outputs.digest }}
           TAGS: ${{ steps.meta.outputs.tags }}
         run: |
-          echo "${TAGS}@DIGEST"
+          for tag in ${TAGS}; do
+            echo "${tag}@DIGEST"
+          done
+          # echo "${TAGS}@DIGEST"
           # echo ${{ inputs.file }}
           # echo "${{ inputs.images }}"
           # x="${{ inputs.images }}"
