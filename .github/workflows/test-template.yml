@@ -41,21 +41,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2.1.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
+
+      # https://github.com/marketplace/actions/docker-metadata-action
+      - name: Docker Metadata
+        uses: docker/metadata-action@v5.0.0
+        id: meta
+        with:
+          images: ${{ inputs.images }}
+          # flavor: ${{ inputs.flavor }}
+          # tags: ${{ inputs.tags }}
+
       - name: loop
+        env:
+          # DIGEST: ${{ steps.meta.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
         run: |
-          echo ${{ inputs.file }}
-          echo "${{ inputs.images }}"
-          x="${{ inputs.images }}"
-          echo -e '\n\n\n'
-          echo "${x}" > images.txt
-          cat images.txt
-          file images.txt
-          wc -l images.txt
-          read -ra lines < images.txt
-          echo "${lines[@]}"
-          for x in "${lines[@]}"; do
-            echo "${x}"
-          done
+          echo "${TAGS}@DIGEST"
+          # echo ${{ inputs.file }}
+          # echo "${{ inputs.images }}"
+          # x="${{ inputs.images }}"
+          # echo -e '\n\n\n'
+          # echo "${x}" > images.txt
+          # cat images.txt
+          # file images.txt
+          # wc -l images.txt
+          # read -ra lines < images.txt
+          # echo "${lines[@]}"
+          # for x in "${lines[@]}"; do
+          #   echo "${x}"
+          # done
           # IFS=$'\n' read -d'' -a images <<< "${x}"
           # for image in "${images[@]}"; do
           #   echo "${image}"
