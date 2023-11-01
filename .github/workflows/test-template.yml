@@ -51,7 +51,7 @@ jobs:
           cat images.txt
           file images.txt
           wc -l images.txt
-          read -ra lines <<< images.txt
+          read -ra lines < images.txt
           echo "${lines[@]}"
           for x in "${lines[@]}"; do
             echo "${x}"
