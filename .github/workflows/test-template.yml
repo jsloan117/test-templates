@@ -39,20 +39,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: split image names
-      #   id: split-images
-      #   shell: bash
-      #   run: |
-      #     # Split the input into an array
-      #     IFS=$'\n' read -d '' image_names <<< "${{ inputs.images }}"
-      #     echo "name=image_names::${image_names[@]}" >> ${GITHUB_OUTPUT}
+      - name: split image names
+        id: split-images
+        shell: bash
+        run: |
+          # Split the input into an array
+          # IFS=',' 
+          read -d ',' image_names <<< "${{ inputs.images }}"
+          echo "name=image_names::${image_names[@]}" >> ${GITHUB_OUTPUT}
 
       - name: loop
         run: |
           image_names=("${{ steps.split-images.outputs.image_names }}")
           echo ${{ inputs.file }}
           echo ${{ inputs.images }}
-          for image in "${{ inputs.images }}"; do
+          for image in "${image_names[@]}"; do
             echo "Building and pushing image: $image"
           done
 
