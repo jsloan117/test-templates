@@ -8,6 +8,9 @@ jobs:
   reusable_job:
     name: build container
     uses: ./.github/workflows/docker-build-template.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
       dockerhub-username: ${{ github.actor }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
