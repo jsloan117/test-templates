@@ -208,6 +208,7 @@ jobs:
       - name: Sign Image
         run: |
           read -ra imgs <<< ${TAGS}
+          echo "{imgs[@]}"
           for image in "${imgs}"; do
             cosign sign -y --key env://COSIGN_KEY --recursive \
               -a "repo=${{ github.repository }}" \
