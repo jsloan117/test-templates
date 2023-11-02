@@ -16,7 +16,8 @@ jobs:
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
       cosign-key: ${{ secrets.COSIGN_KEY }}
       cosign-password: ${{ secrets.COSIGN_KEYPASS }}
-    # with:
+    with:
+      dockerhub-enable: true
     #   images: ghcr.io/${{ github.repository }}
     #   build-args: |
     #     BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
