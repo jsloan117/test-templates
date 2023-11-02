@@ -212,9 +212,10 @@ jobs:
             -a "workflow=${{ github.workflow }}" \
             -a "ref=${{ github.sha }}" \
             -a "ref=${{ github.ref_name }}" \
-            ${TAGS}@${DIGEST}
+            ${IMGS}@${DIGEST}
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
+          IMGS: ${{ inputs.images }}
           TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_KEY: ${{ secrets.cosign-key }}
           COSIGN_PASSWORD: ${{ secrets.cosign-password }}
