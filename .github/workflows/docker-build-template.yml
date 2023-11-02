@@ -136,9 +136,9 @@ jobs:
   build:
     name: job name
     runs-on: ubuntu-latest
-    # permissions:
-    #   contents: read
-    #   packages: write
+    permissions:
+      contents: read
+      packages: write
     #   id-token: write
 
     steps:
