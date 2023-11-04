@@ -212,7 +212,9 @@ jobs:
           images=$(echo "${JSON}" | jq -r '.tags[]' | awk -F':' '{print $1}' | sort -u)
           echo "images: ${images}"
           idx=$((img_count - 1))
+          echo "idx: ${idx}"
           read -d' ' -a imgs <<< $images
+          echo "imgs: ${imgs[@]}"
 
           for i in $(seq 0 ${idx}); do
             cosign sign -y --key env://COSIGN_KEY --recursive \
