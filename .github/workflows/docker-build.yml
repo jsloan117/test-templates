@@ -1,6 +1,6 @@
 ---
 name: calling workflow
-run-name: run name for calling workflow
+# run-name: run name for calling workflow
 
 on: push
 
