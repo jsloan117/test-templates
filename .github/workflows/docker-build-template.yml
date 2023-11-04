@@ -32,10 +32,9 @@ on:
 
       images:
         description: A list of the account/repo names for docker build to push to
-        default: ${{ github.repository }} ghcr.io/${{ github.repository }}
-        # default: |
-        #   ${{ github.repository }}
-        #   ghcr.io/${{ github.repository }}
+        default: |
+          ${{ github.repository }}
+          ghcr.io/${{ github.repository }}
         required: false
         type: string
 
@@ -211,16 +210,23 @@ jobs:
           echo "${TAGS}"
           imgs=$(echo "${TAGS}" | sed -e 's/:\(.*\)/g/')
           echo "${imgs}"
-          cosign sign -y --key env://COSIGN_KEY --recursive \
-            -a "repo=${{ github.repository }}" \
-            -a "workflow=${{ github.workflow }}" \
-            -a "ref=${{ github.sha }}" \
-            -a "ref=${{ github.ref_name }}" \
-            ${imgs}@${DIGEST}
+          img_count=$(echo "${JSON}" | jq -r '[.tags[]] | length')
+          echo "image_count: ${img_count}"
+          images=$(echo "${JSON}" | jq -r '.tags[]' | awk -F':' '{print $1}' | sort -u)
+          echo "images: ${images}"
+          idx=$((img_count - 1))
+
+          for img in $(seq 0 ${idx}); do
+            cosign sign -y --key env://COSIGN_KEY --recursive \
+              -a "repo=${{ github.repository }}" \
+              -a "workflow=${{ github.workflow }}" \
+              -a "ref=${{ github.sha }}" \
+              -a "ref=${{ github.ref_name }}" \
+              ${img}@${DIGEST}
           done
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
-          IMGS: ${{ inputs.images }}
+          JSON: ${{ steps.meta.outputs.json }}
           TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_KEY: ${{ secrets.cosign-key }}
           COSIGN_PASSWORD: ${{ secrets.cosign-password }}
