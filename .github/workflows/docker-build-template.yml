@@ -101,6 +101,24 @@ on:
         required: false
         type: string
 
+      cosign-sign-enable:
+        description: Enable cosign signing
+        default: false
+        required: false
+        type: boolean
+
+      cosign-verify-enable:
+        description: Enable cosign verifying
+        default: false
+        required: false
+        type: boolean
+
+      cosign-upload-key:
+        description: Enable cosign upload key
+        default: false
+        required: false
+        type: boolean
+
     secrets:
       dockerhub-username:
         description: Docker Hub username
@@ -125,15 +143,11 @@ on:
 # Calling permissions must be equal to or greater than these reusable permissions for it to work
 # https://docs.github.com/en/actions/using-workflows/reusing-workflows#supported-keywords-for-jobs-that-call-a-reusable-workflow
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions: {}
 
 jobs:
   build:
-    name: job name
+    # name: job name
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -195,6 +209,7 @@ jobs:
         with:
           file: ${{ inputs.file }}
           platforms: ${{ inputs.platforms }}
+          target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
@@ -205,10 +220,8 @@ jobs:
           sbom: ${{ inputs.sbom }}
 
       - name: Sign Image
+        if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
         run: |
-          echo "${TAGS}"
-          imgs=$(echo "${TAGS}" | awk -F':' '{print $1}')
-          echo "${imgs}"
           for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
             cosign sign -y --key env://COSIGN_KEY --recursive \
               -a "repo=${{ github.repository }}" \
@@ -220,33 +233,27 @@ jobs:
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
           JSON: ${{ steps.meta.outputs.json }}
-          TAGS: ${{ steps.meta.outputs.tags }}
           COSIGN_KEY: ${{ secrets.cosign-key }}
           COSIGN_PASSWORD: ${{ secrets.cosign-password }}
-      # - name: Sign Image
-      #   run: |
-      #     img_count=$(echo "${JSON}" | jq -r '[.tags[]] | length')
-      #     echo "image_count: ${img_count}"
-      #     images=$(echo "${JSON}" | jq -r '.tags[]' | awk -F':' '{print $1}' | sort -u)
-      #     echo "images: ${images}"
-      #     idx=$((img_count - 1))
-      #     echo "idx: ${idx}"
-      #     read -d' ' -a imgs <<< $images
-      #     echo "imgs: ${imgs[@]}"
 
-      #     for i in $(seq 0 ${idx}); do
-      #       cosign sign -y --key env://COSIGN_KEY --recursive \
-      #         -a "repo=${{ github.repository }}" \
-      #         -a "workflow=${{ github.workflow }}" \
-      #         -a "ref=${{ github.sha }}" \
-      #         -a "ref=${{ github.ref_name }}" \
-      #         ${imgs[$i]}@${DIGEST}
-      #     done
-      #   env:
-      #     DIGEST: ${{ steps.build.outputs.digest }}
-      #     JSON: ${{ steps.meta.outputs.json }}
-      #     TAGS: ${{ steps.meta.outputs.tags }}
-      #     COSIGN_KEY: ${{ secrets.cosign-key }}
-      #     COSIGN_PASSWORD: ${{ secrets.cosign-password }}
+      - name: Verify Image
+        if: github.event_name != 'pull_request' && inputs.cosign-verify-enable
+        run: |
+          printf '%s' "${COSIGN_PUBLIC_KEY}" > cosign.pub
+          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
+            cosign verify --key env://COSIGN_PUBLIC_KEY ${img}@${DIGEST} | jq
+          done
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          JSON: ${{ steps.meta.outputs.json }}
+          COSIGN_PUBLIC_KEY: ${{ vars.COSIGN_PUB }}
 
-#          for x in $(jq -r '.tags[] | split(",";"") | .[]' json.json | sed -e 's|:\(.*\)||g'); do echo -e "\n\n\n${x}\n\n\n"; done
+      # https://github.com/marketplace/actions/upload-a-build-artifact
+      - name: Upload public key
+        if: github.event_name != 'pull_request' && inputs.cosign-upload-key
+        uses: actions/upload-artifact@v3.1.3
+        with:
+          name: cosign.pub
+          path: cosign.pub
+          if-no-files-found: warn
+

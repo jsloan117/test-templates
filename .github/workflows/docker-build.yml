@@ -3,9 +3,15 @@ name: docker build
 
 on: push
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
 jobs:
-  reusable_job:
-    name: build container
+  image-build:
+    name: image build
     uses: ./.github/workflows/docker-build-template.yml
     permissions:
       contents: read
@@ -17,9 +23,12 @@ jobs:
       cosign-password: ${{ secrets.COSIGN_KEYPASS }}
     with:
       dockerhub-enable: true
-      images: ghcr.io/${{ github.repository }}
-    #   build-args: |
-    #     BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-    #     VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-    #     REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+      cosign-sign-enable: true
+      cosign-verify-enable: true
+      cosign-upload-key: true
+      # images: ghcr.io/${{ github.repository }}
+      # build-args: |
+      #   BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+      #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+      #   REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
 
