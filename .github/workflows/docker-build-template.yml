@@ -207,22 +207,20 @@ jobs:
 
       - name: Sign Image
         run: |
-          echo "${TAGS}"
-          imgs=$(echo "${TAGS}" | sed -e 's/:\(.*\)/g/')
-          echo "${imgs}"
           img_count=$(echo "${JSON}" | jq -r '[.tags[]] | length')
           echo "image_count: ${img_count}"
           images=$(echo "${JSON}" | jq -r '.tags[]' | awk -F':' '{print $1}' | sort -u)
           echo "images: ${images}"
           idx=$((img_count - 1))
+          read -d' ' -a imgs <<< $images
 
-          for img in $(seq 0 ${idx}); do
+          for i in $(seq 0 ${idx}); do
             cosign sign -y --key env://COSIGN_KEY --recursive \
               -a "repo=${{ github.repository }}" \
               -a "workflow=${{ github.workflow }}" \
               -a "ref=${{ github.sha }}" \
               -a "ref=${{ github.ref_name }}" \
-              ${img}@${DIGEST}
+              ${imgs[$i]}@${DIGEST}
           done
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
@@ -231,3 +229,4 @@ jobs:
           COSIGN_KEY: ${{ secrets.cosign-key }}
           COSIGN_PASSWORD: ${{ secrets.cosign-password }}
 
+#          for x in $(jq -r '.tags[] | split(",";"") | .[]' json.json | sed -e 's|:\(.*\)||g'); do echo -e "\n\n\n${x}\n\n\n"; done
