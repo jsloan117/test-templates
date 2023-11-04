@@ -1,6 +1,5 @@
 ---
-name: calling workflow
-# run-name: run name for calling workflow
+name: docker build
 
 on: push
 
@@ -18,7 +17,7 @@ jobs:
       cosign-password: ${{ secrets.COSIGN_KEYPASS }}
     with:
       dockerhub-enable: true
-    #   images: ghcr.io/${{ github.repository }}
+      images: ghcr.io/${{ github.repository }}
     #   build-args: |
     #     BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
     #     VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}

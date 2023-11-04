@@ -2,8 +2,7 @@
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 # https://docs.github.com/en/actions/learn-github-actions/contexts
 
-name: name of workflow
-run-name: name of run
+name: docker build and push
 
 on:
   workflow_call:
