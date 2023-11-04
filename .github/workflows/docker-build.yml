@@ -11,7 +11,7 @@ permissions: {}
 
 jobs:
   image-build:
-    name: image build
+    name: call docker build
     uses: ./.github/workflows/docker-build-template.yml
     permissions:
       contents: read
