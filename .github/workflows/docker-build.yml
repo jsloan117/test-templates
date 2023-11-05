@@ -10,8 +10,8 @@ concurrency:
 permissions: {}
 
 jobs:
-  image-build:
-    name: call docker build
+  build:
+    # name: call docker build
     uses: ./.github/workflows/docker-build-template.yml
     permissions:
       contents: read
