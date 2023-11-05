@@ -147,7 +147,7 @@ permissions: {}
 
 jobs:
   build:
-    # name: build image
+    name: build image
     runs-on: ubuntu-latest
     permissions:
       contents: read
