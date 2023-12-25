@@ -163,7 +163,7 @@ jobs:
       - name: Install Cosign
         # don't install on prs
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.1.2
+        uses: sigstore/cosign-installer@v3.3.0
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Set up QEMU
@@ -178,7 +178,7 @@ jobs:
 
       # https://github.com/marketplace/actions/docker-metadata-action
       - name: Docker Metadata
-        uses: docker/metadata-action@v5.0.0
+        uses: docker/metadata-action@v5.4.0
         id: meta
         with:
           images: ${{ inputs.images }}
@@ -204,7 +204,7 @@ jobs:
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: Build and push
-        uses: docker/build-push-action@v5.0.0
+        uses: docker/build-push-action@v5.1.0
         id: build
         with:
           file: ${{ inputs.file }}
@@ -251,7 +251,7 @@ jobs:
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload public key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4.0.0
         with:
           name: cosign.pub
           path: cosign.pub
