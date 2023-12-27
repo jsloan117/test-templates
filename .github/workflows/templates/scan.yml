@@ -1,0 +1,88 @@
+---
+# docker security scan using Anchore
+
+# name: security scanner
+
+on:
+  workflow_call:
+    # allow reuse of this workflow in other repos
+    inputs:
+      images:
+        description: A list of the account/repo names for docker build to push to
+        default: ${{ github.repository }}
+        required: false
+        type: string
+
+      # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
+      sbom-snapshot-enable:
+        description: Whether to upload the SBOM to the GitHub Dependency submission API
+        default: false
+        required: false
+        type: string
+
+      fail-build:
+        description: Fail the build if a vulnerability is found with a higher severity. That severity defaults to medium and can be set with severity-cutoff.
+        default: true
+        required: false
+        type: string
+
+      severity-cutoff:
+        description: Minimum vulnerability severity to trigger a failure. Valid choices are "negligible", "low", "medium", "high" and "critical".
+        default: critical
+        required: false
+        type: string
+
+jobs:
+  build:
+    # name: build image
+    runs-on: ubuntu-latest
+    permissions: {}
+      # contents: read
+      # packages: write
+      # id-token: write
+
+    steps:
+      # # https://github.com/marketplace/actions/checkout
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+
+      # https://github.com/marketplace/actions/anchore-sbom-action
+      - name: Anchore SBOM Action
+        uses: anchore/sbom-action@v0.15.1
+        id: sbom
+        with:
+          image: ${{ inputs.images }}
+          # artifact-name: sbom.spdx
+          dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
+
+      # https://github.com/marketplace/actions/anchore-container-scan
+      - name: Anchore Container Scan
+        uses: anchore/scan-action@v3.3.8
+        id: scan
+        with:
+          image: ${{ inputs.images }}
+          fail-build: ${{ inputs.fail-build }}
+          severity-cutoff: ${{ inputs.severity }}
+
+      # # https://github.com/github/codeql-action
+      # # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
+      # - name: Upload Anchore scan SARIF report
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: ${{ steps.scan.outputs.sarif }}
+      #     wait-for-processing: true
+
+      # - name: Set Sarif Report artifact variable
+      #   run: |
+      #     echo "sarif_artifact=$(echo ${image_tag} | sed -e 's|/|-|g' -e 's|:|_|g').sarif" >> $GITHUB_ENV
+      #   env:
+      #     image_tag: ${{ steps.meta.outputs.tags }}
+
+      # # https://github.com/marketplace/actions/upload-a-build-artifact
+      # - name: Upload Sarif Report
+      #   uses: actions/upload-artifact@v4.0.0
+      #   with:
+      #     name: ${{ env.sarif_artifact }}
+      #     path: ${{ steps.scan.outputs.sarif }}
+      #     if-no-files-found: warn
+
