@@ -1,21 +1,25 @@
 ---
-name: docker build
+name: docker build v2
 
 on: push
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 permissions: {}
 
 jobs:
   build:
-    name: docker build
-    uses: ./.github/workflows/docker-build-template.yml
+    name: docker build v2x
+
     permissions:
       contents: read
       packages: write
+
+    # uses: jsloan117/test-templates/.github/workflows/build.yml@main
+    uses: ./.github/workflows/docker-build-template.yml
     secrets:
       dockerhub-username: ${{ github.actor }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}

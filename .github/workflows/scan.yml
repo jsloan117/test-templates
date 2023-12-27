@@ -18,13 +18,13 @@ on:
         description: Whether to upload the SBOM to the GitHub Dependency submission API
         default: false
         required: false
-        type: string
+        type: boolean
 
       fail-build:
         description: Fail the build if a vulnerability is found with a higher severity. That severity defaults to medium and can be set with severity-cutoff.
         default: true
         required: false
-        type: string
+        type: boolean
 
       severity-cutoff:
         description: Minimum vulnerability severity to trigger a failure. Valid choices are "negligible", "low", "medium", "high" and "critical".
