@@ -33,7 +33,7 @@ on:
         type: string
 
 jobs:
-  build:
+  scan:
     # name: build image
     runs-on: ubuntu-latest
     permissions: {}

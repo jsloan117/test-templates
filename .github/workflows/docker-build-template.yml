@@ -219,8 +219,7 @@
             provenance: ${{ inputs.provenance }}
             sbom: ${{ inputs.sbom }}
 
-        - name: scans
-          uses: ./.github/workflows/scan.yml
+        - uses: ./.github/workflows/scan.yml
           with:
             images: ${{ steps.meta.outputs.tags }}
             sbom-snapshot-enable: true
