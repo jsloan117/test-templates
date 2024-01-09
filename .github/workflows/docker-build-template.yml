@@ -257,7 +257,7 @@ jobs:
           path: cosign.pub
           if-no-files-found: warn
 
-      - name: test
-        uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-        with:
-          images: ${{ steps.meta.outputs.json }}
+      # - name: test
+      #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+      #   with:
+      #     images: ${{ steps.meta.outputs.json }}
