@@ -36,3 +36,9 @@ jobs:
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
       #   REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
 
+  # scan:
+  #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+  #   needs: build
+  #   with:
+  #     images: ${{ steps.meta.outputs.json }}
+
