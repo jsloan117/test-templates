@@ -9,7 +9,9 @@ on:
     inputs:
       images:
         description: A list of the account/repo names for docker build to push to
-        default: ${{ github.repository }}
+        default: |
+          ${{ github.repository }}
+          ghcr.io/${{ github.repository }}
         required: false
         type: string
 

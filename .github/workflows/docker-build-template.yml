@@ -138,6 +138,11 @@ on:
     #     description: "single-use image tag for GHA runs"
     #     value: ${{ jobs.build.outputs.image-tag }}
 
+    outputs:
+      imgdigest:
+        description: words and stuff
+        value: ${{ jobs.build.outputs.digest }}
+
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
 # Calling permissions must be equal to or greater than these reusable permissions for it to work
@@ -153,6 +158,9 @@ jobs:
       contents: read
       packages: write
     #   id-token: write
+
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -218,6 +226,14 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
           provenance: ${{ inputs.provenance }}
           sbom: ${{ inputs.sbom }}
+
+# ${{ fromJSON(steps.meta.outputs.json).tags }}
+
+      - name: debug
+        run: |
+          echo "tags are:${TAGS}"
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
