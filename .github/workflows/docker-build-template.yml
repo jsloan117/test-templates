@@ -231,7 +231,9 @@ jobs:
 
       - name: debug
         run: |
-          echo "tags are:${TAGS}"
+          echo "tags are: ${TAGS}"
+          echo -e '\n\n\n'
+          echo "split tags are: ${TAGS}" | awk -F':' '{print $1}' | sort -u
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
 
