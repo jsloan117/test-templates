@@ -231,6 +231,10 @@ jobs:
 
       - name: debug
         run: |
+          for t in "${TAGS}"; do
+            echo -e "\n\nThe tag is: ${t}\n\n"
+          done
+
           echo "tags are: ${TAGS}"
           echo -e '\n\n\n'
           echo "split tags are: ${TAGS}" | awk -F':' '{print $1}' | sort -u
