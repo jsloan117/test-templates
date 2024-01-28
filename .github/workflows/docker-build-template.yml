@@ -231,7 +231,7 @@ jobs:
 
       - name: debug
         run: |
-          for t in "${TAGS}"; do
+          for t in "${TAGS[@]}"; do
             echo -e "\n\nThe tag is: ${t}\n\n"
           done
 
