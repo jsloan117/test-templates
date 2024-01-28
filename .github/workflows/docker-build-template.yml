@@ -245,9 +245,20 @@ jobs:
           echo "tags2 are: ${TAGS2}"
           echo -e '\n\n\n'
           echo "split tags2 are: ${TAGS2}" | awk -F':' '{print $1}' | sort -u
+
+          echo -e '\n\n\n'
+          echo -e '\n\n\n'
+
+          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
+            image_list+="${img},"
+          done
+
+          for i in "${image_list}"; do
+            echo "\nimage_list is: ${i}"
+          done
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
-          TAGS2: ${{ fromJson(steps.meta.outputs.json) }}
+          TAGS2: ${{ steps.meta.outputs.json }}
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
