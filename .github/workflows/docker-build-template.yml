@@ -243,7 +243,7 @@ jobs:
           echo "split tags2 are: ${TAGS2}" | awk -F':' '{print $1}' | sort -u
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
-          TAGS2: ${{ fromJson(steps.meta.outputs.json).tags['*'] }}
+          TAGS2: ${{ fromJson(steps.meta.outputs.json).tags[*] }}
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
