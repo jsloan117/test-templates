@@ -231,9 +231,10 @@ jobs:
 
       - name: debug
         run: |
-          for t in $TAGS; do
-            t=$(echo $t | awk -F':' '{print $1}')
-            echo -e "\n\nThe tag is: $t"
+          for t in ${TAGS}; do
+            t=$(echo ${t} | awk -F':' '{print $1}')
+            imglist+=" ${t}"
+            echo -e "\n\nThe tag is: ${t}"
           done
 
           # echo "tags are: ${TAGS}"
