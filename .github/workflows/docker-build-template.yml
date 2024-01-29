@@ -141,7 +141,7 @@ on:
     outputs:
       imgdigest:
         description: words and stuff
-        value: ${{ jobs.build.outputs.digest }}
+        value: ${{ jobs.build.outputs.digests }}
 
       imgs:
         description: image list
@@ -164,7 +164,7 @@ jobs:
     #   id-token: write
 
     outputs:
-      digest: ${{ steps.build.outputs.digest }}
+      digests: ${{ steps.build.outputs.digest }}
       images: ${{ steps.debug.outputs.imglist }}
 
     steps:
@@ -234,7 +234,7 @@ jobs:
 
       - name: debug
         run: |
-          for t in ${{ inputs.images }}; do
+          for t in "${{ inputs.images }}"; do
             echo -e "\n\n${t}\n\n"
             t=$(echo ${t} | awk -F':' '{print $1}')
             image_list+=" ${t}"
