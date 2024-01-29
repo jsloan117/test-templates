@@ -143,6 +143,10 @@ on:
         description: words and stuff
         value: ${{ jobs.build.outputs.digest }}
 
+      imgs:
+        description: image list
+        value: ${{ jobs.build.outputs.images }}
+
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
 # Calling permissions must be equal to or greater than these reusable permissions for it to work
@@ -161,6 +165,7 @@ jobs:
 
     outputs:
       digest: ${{ steps.build.outputs.digest }}
+      images: ${{ steps.debug.outputs.imglist }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -227,8 +232,6 @@ jobs:
           provenance: ${{ inputs.provenance }}
           sbom: ${{ inputs.sbom }}
 
-# ${{ fromJSON(steps.meta.outputs.json).tags }}
-
       - name: debug
         run: |
           for t in ${TAGS}; do
@@ -252,11 +255,6 @@ jobs:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}
         id: debug
-
-      - run: |
-          for i in ${{ steps.debug.outputs.imglist }}; do
-            echo -e "\nimage is: $i"
-          done
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable

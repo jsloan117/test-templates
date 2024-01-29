@@ -47,8 +47,13 @@ jobs:
       - name: check digest
         env:
           digest: ${{ needs.build.outputs.imgdigest }}
+          imgs: ${{ needs.build.outputs.imgs }}
         run: |
           echo "digest for image: ${digest}"
+
+          for i in $imgs; do
+            echo -e "\nimage_list: $i"
+          done
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
