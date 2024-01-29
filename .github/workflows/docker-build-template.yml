@@ -253,7 +253,7 @@ jobs:
             image_list+="${img} "
           done
 
-          IFS=' ' ;for i in "${image_list}"; do
+          for i in "${image_list[@]}"; do
             echo -e "\nimage is: ${i}"
           done
         env:
