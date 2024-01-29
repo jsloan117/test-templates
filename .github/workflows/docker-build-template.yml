@@ -234,13 +234,14 @@ jobs:
 
       - name: debug
         run: |
-          for t in ${TAGS}; do
+          for t in ${{ inputs.images }}; do
+            echo -e "\n\n${t}\n\n"
             t=$(echo ${t} | awk -F':' '{print $1}')
             image_list+=" ${t}"
             echo -e "\n\nThe tag is: ${t}"
           done
 
-          echo "imglist=somevalue_I_typed" >> $GITHUB_OUTPUT
+          echo "imglist=${image_list}" >> $GITHUB_OUTPUT
 
           # for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
           #   image_list+=" ${img} "
