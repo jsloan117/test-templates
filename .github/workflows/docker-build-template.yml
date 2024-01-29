@@ -139,9 +139,9 @@ on:
     #     value: ${{ jobs.build.outputs.image-tag }}
 
     outputs:
-      imgdigest:
+      digest:
         description: words and stuff
-        value: ${{ jobs.build.outputs.digests }}
+        value: ${{ jobs.build.outputs.digest }}
 
       imgs:
         description: image list
@@ -164,7 +164,7 @@ jobs:
     #   id-token: write
 
     outputs:
-      digests: ${{ steps.build.outputs.digest }}
+      digest: ${{ steps.debug.outputs.digest }}
       images: ${{ steps.debug.outputs.imglist }}
 
     steps:
@@ -241,6 +241,7 @@ jobs:
           done
 
           echo "imglist=${image_list}" >> $GITHUB_OUTPUT
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
           # for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
           #   image_list+=" ${img} "
@@ -254,6 +255,7 @@ jobs:
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}
+          DIGEST: ${{ steps.build.outputs.digest }}
         id: debug
 
       - name: Sign Image

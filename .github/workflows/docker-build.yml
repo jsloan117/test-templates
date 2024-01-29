@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: check digest
         env:
-          digest: ${{ needs.build.outputs.imgdigest }}
+          digest: ${{ needs.build.outputs.digest }}
           imgs: ${{ needs.build.outputs.imgs }}
         run: |
           echo "digest for image: ${digest}"
@@ -59,7 +59,7 @@ jobs:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
   #   needs: build
   #   with:
-  #     images: ${{ needs.build.outputs.imgdigest }}
+  #     images: ${{ needs.build.outputs.digest }}
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
