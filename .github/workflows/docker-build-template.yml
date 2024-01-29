@@ -250,10 +250,10 @@ jobs:
           echo -e '\n\n\n'
 
           for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
-            image_list+="${img} "
+            image_list+=" ${img} "
           done
 
-          for i in "${image_list[@]}"; do
+          for i in $image_list; do
             echo -e "\nimage is: ${i}"
           done
         env:
