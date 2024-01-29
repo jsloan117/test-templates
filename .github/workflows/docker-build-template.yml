@@ -254,11 +254,19 @@ jobs:
           done
 
           for i in $image_list; do
-            echo -e "\nimage is: ${i}"
+            echo -e "\nimage is: $i"
           done
+
+          echo "imglist=$image_list" >> $GITHUB_OUTPUT
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}
+        id: debug
+
+      - run: |
+          for i in $imglist; do
+            echo -e "\nimage is: $i
+          done
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
