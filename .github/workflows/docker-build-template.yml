@@ -231,6 +231,24 @@ jobs:
 
       - name: debug
         run: |
+          for t in $TAGS; do
+            echo -e "\n\nThe tag is: $t\n\n"
+          done
+
+          # echo "tags are: ${TAGS}"
+          # echo -e '\n\n\n'
+          # echo "split tags are: ${TAGS}" | awk -F':' '{print $1}' | sort -u
+
+          # echo -e '\n\n\n'
+          # echo -e '\n\n\n'
+
+          # echo "tags2 are: ${TAGS2}"
+          # echo -e '\n\n\n'
+          # echo "split tags2 are: ${TAGS2}" | awk -F':' '{print $1}' | sort -u
+
+          # echo -e '\n\n\n'
+          # echo -e '\n\n\n'
+
           for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
             image_list+=" ${img} "
           done
