@@ -50,7 +50,7 @@ jobs:
 
       # https://github.com/marketplace/actions/anchore-sbom-action
       - name: Anchore SBOM Action
-        uses: anchore/sbom-action@v0.15.3
+        uses: anchore/sbom-action@v0.15.5
         id: sbom
         with:
           image: ${{ inputs.images }}
@@ -59,7 +59,7 @@ jobs:
 
       # https://github.com/marketplace/actions/anchore-container-scan
       - name: Anchore Container Scan
-        uses: anchore/scan-action@v3.5.0
+        uses: anchore/scan-action@v3.6.1
         id: scan
         with:
           image: ${{ inputs.images }}
@@ -82,7 +82,7 @@ jobs:
 
       # # https://github.com/marketplace/actions/upload-a-build-artifact
       # - name: Upload Sarif Report
-      #   uses: actions/upload-artifact@v4.0.0
+      #   uses: actions/upload-artifact@v4.3.0
       #   with:
       #     name: ${{ env.sarif_artifact }}
       #     path: ${{ steps.scan.outputs.sarif }}

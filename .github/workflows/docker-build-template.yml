@@ -234,14 +234,14 @@ jobs:
 
       - name: debug
         run: |
-          for t in "${{ inputs.images }}"; do
-            echo -e "\n\n${t}\n\n"
+          for t in "${TAGS}"; do
             t=$(echo ${t} | awk -F':' '{print $1}')
             image_list+=" ${t}"
             echo -e "\n\nThe tag is: ${t}"
           done
 
-          echo "imglist=${image_list}" >> $GITHUB_OUTPUT
+          echo "imglist=${{ inputs.images }}" >> $GITHUB_OUTPUT
+          # echo "imglist=${image_list}" >> $GITHUB_OUTPUT
 
           # for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
           #   image_list+=" ${img} "
@@ -289,7 +289,7 @@ jobs:
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload public key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
-        uses: actions/upload-artifact@v4.0.0
+        uses: actions/upload-artifact@v4.3.0
         with:
           name: cosign.pub
           path: cosign.pub
