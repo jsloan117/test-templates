@@ -265,7 +265,7 @@ jobs:
 
       - run: |
           for i in $imglist; do
-            echo -e "\nimage is: $i
+            echo -e "\nimage is: $i"
           done
 
       - name: Sign Image
