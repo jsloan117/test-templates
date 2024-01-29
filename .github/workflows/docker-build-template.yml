@@ -233,33 +233,21 @@ jobs:
         run: |
           for t in ${TAGS}; do
             t=$(echo ${t} | awk -F':' '{print $1}')
-            imglist+=" ${t}"
+            image_list+=" ${t}"
             echo -e "\n\nThe tag is: ${t}"
           done
 
-          # echo "tags are: ${TAGS}"
-          # echo -e '\n\n\n'
-          # echo "split tags are: ${TAGS}" | awk -F':' '{print $1}' | sort -u
+          echo "imglist=${image_list}" >> $GITHUB_OUTPUT
 
-          # echo -e '\n\n\n'
-          # echo -e '\n\n\n'
+          # for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
+          #   image_list+=" ${img} "
+          # done
 
-          # echo "tags2 are: ${TAGS2}"
-          # echo -e '\n\n\n'
-          # echo "split tags2 are: ${TAGS2}" | awk -F':' '{print $1}' | sort -u
+          # for i in $image_list; do
+          #   echo -e "\nimage is: $i"
+          # done
 
-          # echo -e '\n\n\n'
-          # echo -e '\n\n\n'
-
-          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
-            image_list+=" ${img} "
-          done
-
-          for i in $image_list; do
-            echo -e "\nimage is: $i"
-          done
-
-          echo "imglist=$image_list" >> $GITHUB_OUTPUT
+          # echo "imglist=$image_list" >> $GITHUB_OUTPUT
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}
