@@ -232,7 +232,7 @@ jobs:
       - name: debug
         run: |
           for t in $TAGS; do
-            echo -e "\n\nThe tag is: $t\n\n"
+            echo -e "\n\nThe tag is: $t" | awk -F':' '{print $1}' | sort -u
           done
 
           # echo "tags are: ${TAGS}"
