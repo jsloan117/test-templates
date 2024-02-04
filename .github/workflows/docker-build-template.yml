@@ -260,7 +260,7 @@ jobs:
         uses: anchore/sbom-action@v0.15.8
         id: sbom
         with:
-          image: ${{ inputs.images }}
+          image: ${{ inputs.images[0] }}
           artifact-name: sbom.spdx
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
