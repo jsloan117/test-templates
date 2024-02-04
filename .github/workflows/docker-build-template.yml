@@ -183,7 +183,7 @@ jobs:
       - name: Install Cosign
         # don't install on prs
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.3.0
+        uses: sigstore/cosign-installer@v3.4.0
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Set up QEMU
@@ -200,7 +200,7 @@ jobs:
 
       # https://github.com/marketplace/actions/docker-metadata-action
       - name: Docker Metadata
-        uses: docker/metadata-action@v5.5.0
+        uses: docker/metadata-action@v5.5.1
         id: meta
         with:
           images: ${{ inputs.images }}
