@@ -232,7 +232,7 @@ jobs:
           build-args: ${{ inputs.build-args }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
           load: ${{ inputs.load }}
-          output: 'type=docker'
+          outputs: 'type=docker'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ github.workflow }}
