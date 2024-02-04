@@ -234,27 +234,27 @@ jobs:
 
       - name: debug
         run: |
-          echo $TAGS
-          for t in "${TAGS}"; do
-            t=$(echo ${t} | awk -F':' '{print $1}')
-            image_list+=" ${t}"
-            echo -e "\n\nThe tag is: ${t}"
-          done
+          # echo $TAGS
+          # for t in "${TAGS}"; do
+          #   t=$(echo ${t} | awk -F':' '{print $1}')
+          #   image_list+=" ${t}"
+          #   echo -e "\n\nThe tag is: ${t}"
+          # done
 
-          echo "imglist=${image_list}" >> $GITHUB_OUTPUT
+          # echo "imglist=${image_list}" >> $GITHUB_OUTPUT
+          echo "digest is: ${DIGEST}"
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
           for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
-            image_list+=" ${img}"
+            image_list+="${img} "
           done
 
-          for i in $image_list; do
-            echo -e "\nimage is: $i"
-          done
+          # for i in $image_list; do
+          #   echo -e "\nimage is: $i"
+          # done
 
-          echo "imglistx=$image_list" >> $GITHUB_OUTPUT
-          echo "imglistx=$image_list" > /tmp/juxjssxss.ikkkksiux
-          cat /tmp/juxjssxss.ikkkksiux
+          echo "image list is: ${image_list}"
+          echo "imglist=$image_list" >> $GITHUB_OUTPUT
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}
