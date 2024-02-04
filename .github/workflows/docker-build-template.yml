@@ -31,9 +31,10 @@ on:
 
       images:
         description: A list of the account/repo names for docker build to push to
-        default: |
-          ${{ github.repository }}
-          ghcr.io/${{ github.repository }}
+        default: ${{ github.repository }}
+        # default: |
+        #   ${{ github.repository }}
+        #   ghcr.io/${{ github.repository }}
         required: false
         type: string
 
@@ -232,7 +233,7 @@ jobs:
           build-args: ${{ inputs.build-args }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
           load: ${{ inputs.load }}
-          outputs: 'type=docker'
+          # outputs: 'type=docker'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ github.workflow }}
