@@ -31,6 +31,7 @@ jobs:
       cosign-verify-enable: false
       cosign-upload-key: false
       push: false
+      load: true
       # images: ghcr.io/${{ github.repository }}
       # build-args: |
       #   BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}

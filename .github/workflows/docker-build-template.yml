@@ -52,6 +52,12 @@ on:
         required: false
         type: boolean
 
+      load:
+        description: Load image locally
+        default: false
+        required: false
+        type: boolean
+
       tags:
         # https://github.com/marketplace/actions/docker-metadata-action#tags-input
         description: Use docker-metadata action to create tags from a key-value pair list in CSV format
@@ -225,6 +231,7 @@ jobs:
           target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
+          load: ${{ inputs.load }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ github.workflow }}
