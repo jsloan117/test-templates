@@ -266,6 +266,8 @@ jobs:
 
           echo "image list is: ${image_list}"
           echo "imglist=$image_list" >> $GITHUB_OUTPUT
+          
+          docker image ls
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}

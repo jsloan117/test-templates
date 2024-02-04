@@ -60,11 +60,11 @@ jobs:
             echo -e "\nimage_list: $i"
           done
 
-  # scan:
-  #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-  #   needs: build
-  #   with:
-  #     images: ${{ needs.build.outputs.digest }}
+  scan:
+    uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+    needs: build
+    with:
+      images: ${{ needs.build.outputs.imgs }}
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main

@@ -48,6 +48,8 @@ jobs:
       # - name: Checkout
       #   uses: actions/checkout@v4
 
+      - run: docker image ls
+
       # https://github.com/marketplace/actions/anchore-sbom-action
       - name: Anchore SBOM Action
         uses: anchore/sbom-action@v0.15.8
