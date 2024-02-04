@@ -53,8 +53,12 @@ jobs:
         env:
           digest: ${{ needs.build.outputs.digest }}
           imgs: ${{ needs.build.outputs.imgs }}
+          sbom: ${{ needs.build.outputs.sbom }}
         run: |
           echo "digest for image: ${digest}"
+          echo
+          echo "sbom name: ${sbom}"
+          echo
 
           for i in $imgs; do
             echo -e "\nimage_list: $i"
@@ -64,7 +68,8 @@ jobs:
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
     needs: build
     with:
-      images: ${{ needs.build.outputs.imgs }}
+      sbom: ${{ needs.build.outputs.sbom }}
+      # images: ${{ needs.build.outputs.imgs }}
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main

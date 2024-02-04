@@ -15,6 +15,12 @@ on:
         required: false
         type: string
 
+      sbom:
+        description: sbom file to scan
+        default: sbom.spdx.json
+        required: false
+        type: string
+
       # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
       sbom-snapshot-enable:
         description: Whether to upload the SBOM to the GitHub Dependency submission API
@@ -48,23 +54,29 @@ jobs:
       # - name: Checkout
       #   uses: actions/checkout@v4
 
-      - run: docker image ls
+      # - run: docker image ls
 
-      # https://github.com/marketplace/actions/anchore-sbom-action
-      - name: Anchore SBOM Action
-        uses: anchore/sbom-action@v0.15.8
-        id: sbom
-        with:
-          image: ${{ inputs.images }}
-          # artifact-name: sbom.spdx
-          dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
+      # # https://github.com/marketplace/actions/anchore-sbom-action
+      # - name: Anchore SBOM Action
+      #   uses: anchore/sbom-action@v0.15.8
+      #   id: sbom
+      #   with:
+      #     image: ${{ inputs.images }}
+      #     # artifact-name: sbom.spdx
+      #     dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
+
+      # https://github.com/marketplace/actions/download-a-build-artifact
+      - uses: actions/download-artifact@v4
+
+      - run: ls -lh
 
       # https://github.com/marketplace/actions/anchore-container-scan
       - name: Anchore Container Scan
         uses: anchore/scan-action@v3.6.4
         id: scan
         with:
-          image: ${{ inputs.images }}
+          sbom: ${{ inputs.sbom }}
+          # image: ${{ inputs.images }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
 

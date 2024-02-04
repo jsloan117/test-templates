@@ -102,6 +102,13 @@ on:
         required: false
         type: boolean
 
+      # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
+      sbom-snapshot-enable:
+        description: Whether to upload the SBOM to the GitHub Dependency submission API
+        default: false
+        required: false
+        type: boolean
+
       build-args:
         description: Docker build arguments
         default: ''
@@ -154,6 +161,10 @@ on:
         description: image list
         value: ${{ jobs.build.outputs.images }}
 
+      sbom:
+        description: sbom artifact name
+        value: ${{ jobs.build.outputs.sbom }}
+
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
 # Calling permissions must be equal to or greater than these reusable permissions for it to work
@@ -173,6 +184,7 @@ jobs:
     outputs:
       digest: ${{ steps.debug.outputs.digest }}
       images: ${{ steps.debug.outputs.imglist }}
+      sbom: ${{ steps.sbom.outputs.sbom }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -242,6 +254,15 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
           provenance: ${{ inputs.provenance }}
           sbom: ${{ inputs.sbom }}
+
+      # https://github.com/marketplace/actions/anchore-sbom-action
+      - name: Anchore SBOM Action
+        uses: anchore/sbom-action@v0.15.8
+        id: sbom
+        with:
+          image: ${{ inputs.images }}
+          artifact-name: sbom.spdx
+          dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
       - name: debug
         run: |
