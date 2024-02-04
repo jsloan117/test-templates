@@ -163,7 +163,7 @@ on:
 
       sbom:
         description: sbom artifact name
-        value: ${{ jobs.build.outputs.sbom }}
+        value: ${{ jobs.build.outputs.sbomx }}
 
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
@@ -184,7 +184,7 @@ jobs:
     outputs:
       digest: ${{ steps.debug.outputs.digest }}
       images: ${{ steps.debug.outputs.imglist }}
-      sbom: ${{ steps.sbom.outputs.sbom }}
+      sbomx: ${{ steps.sbom.outputs.sbom }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -265,6 +265,7 @@ jobs:
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
       - name: debug
+        id: debug
         run: |
           # echo $TAGS
           # for t in "${TAGS}"; do
@@ -293,7 +294,6 @@ jobs:
           TAGS: ${{ steps.meta.outputs.tags }}
           TAGS2: ${{ steps.meta.outputs.json }}
           DIGEST: ${{ steps.build.outputs.digest }}
-        id: debug
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable

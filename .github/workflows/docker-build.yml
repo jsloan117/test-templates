@@ -64,12 +64,17 @@ jobs:
             echo -e "\nimage_list: $i"
           done
 
-  scan:
-    uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-    needs: build
-    with:
-      sbom: ${{ needs.build.outputs.sbom }}
-      # images: ${{ needs.build.outputs.imgs }}
+      # https://github.com/marketplace/actions/download-a-build-artifact
+      - uses: actions/download-artifact@v4
+
+      - run: ls -lh
+
+  # scan:
+  #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+  #   needs: build
+  #   with:
+  #     sbom: ${{ needs.build.outputs.sbom }}
+  #     # images: ${{ needs.build.outputs.imgs }}
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
