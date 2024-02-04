@@ -37,6 +37,8 @@ jobs:
       images: |
         fake/image
         ghcr.io/fake/image
+        jsloan117/test-templates
+        ghcr.io/test-templates
       # build-args: |
       #   BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
