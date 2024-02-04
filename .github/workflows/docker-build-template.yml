@@ -191,7 +191,7 @@ jobs:
 
       # https://github.com/marketplace/actions/docker-setup-buildx
       - name: Set up Docker Buildx
-        id: buildx
+        id: bldx
         uses: docker/setup-buildx-action@v3.0.0
         with:
           install: true
@@ -231,12 +231,11 @@ jobs:
         with:
           file: ${{ inputs.file }}
           # platforms: ${{ inputs.platforms }}
-          platforms: ${{ steps.buildx.outputs.platforms }}
+          platforms: ${{ steps.bldx.outputs.platforms }}
           target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
           load: ${{ inputs.load }}
-          # outputs: 'type=docker'
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ github.workflow }}
