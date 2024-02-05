@@ -67,7 +67,7 @@ jobs:
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
 
-      - run: ls -lh
+      - run: pwd; ls -lh; ls -lh ./sbom
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
