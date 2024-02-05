@@ -68,8 +68,8 @@ jobs:
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
         with:
-          name: sbom.spdx
-          path: /tmp/sbom.spdx
+          name: sbom
+          path: /tmp/sbom.spdx.json
 
       - run: ls -lh
 
