@@ -54,10 +54,13 @@ jobs:
           digest: ${{ needs.build.outputs.digest }}
           imgs: ${{ needs.build.outputs.imgs }}
           sbom: ${{ needs.build.outputs.sbom }}
+          testx: ${{ needs.build.outputs.test }}
         run: |
           echo "digest for image: ${digest}"
           echo
           echo "sbom name: ${sbom}"
+          echo
+          echo "test var: ${testx}"
           echo
 
           for i in $imgs; do

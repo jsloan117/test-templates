@@ -165,6 +165,9 @@ on:
         description: sbom artifact name
         value: ${{ jobs.build.outputs.sbomx }}
 
+      test:
+        value: ${{ inputs.sbom }}
+
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
 # Calling permissions must be equal to or greater than these reusable permissions for it to work
