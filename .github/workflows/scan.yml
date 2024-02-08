@@ -67,6 +67,7 @@ jobs:
 
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
+        id: sbom
         with:
           name: sbom
           # path: /tmp/sbom.spdx.json
@@ -79,7 +80,8 @@ jobs:
         id: scan
         with:
           # sbom: ${{ inputs.sbom }}
-          sbom: ./sbom/sbom.spdx.json
+          # sbom: ./sbom/sbom.spdx.json
+          sbom: ${{ steps.sbom.outputs.download-path }}
           # image: ${{ inputs.images }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
