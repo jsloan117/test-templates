@@ -267,7 +267,7 @@ jobs:
           artifact-name: sbom.spdx.json
           format: spdx-json
           upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
-          # output-file: /tmp/sbom.spdx.json
+          output-file: sbom.spdx.json
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
       # https://github.com/marketplace/actions/anchore-container-scan
