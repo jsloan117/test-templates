@@ -69,7 +69,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: sbom
-          path: /tmp/sbom.spdx.json
+          # path: /tmp/sbom.spdx.json
 
       - run: ls -lh /tmp
 
@@ -79,7 +79,7 @@ jobs:
         id: scan
         with:
           # sbom: ${{ inputs.sbom }}
-          sbom: /tmp/sbom.spdx.json
+          sbom: ./sbom/sbom.spdx.json
           # image: ${{ inputs.images }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
