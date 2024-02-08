@@ -81,7 +81,7 @@ jobs:
         with:
           # sbom: ${{ inputs.sbom }}
           # sbom: ./sbom/sbom.spdx.json
-          sbom: ${{ steps.sbom.outputs.download-path }}
+          sbom: ${{ steps.sbom.outputs.download-path }}/sbom.spdx.json
           # image: ${{ inputs.images }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
