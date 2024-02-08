@@ -71,7 +71,7 @@ jobs:
           name: sbom
           # path: /tmp/sbom.spdx.json
 
-      - run: ls -lh /tmp
+      - run: ls -lhR
 
       # https://github.com/marketplace/actions/anchore-container-scan
       - name: Anchore Container Scan
