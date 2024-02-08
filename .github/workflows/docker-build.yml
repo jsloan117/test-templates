@@ -72,12 +72,12 @@ jobs:
 
       - run: pwd; ls -lh; ls -lh ./sbom
 
-  # scan:
-  #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-  #   needs: build
-  #   with:
-  #     sbom: ${{ needs.build.outputs.sbom }}
-  #     # images: ${{ needs.build.outputs.imgs }}
+  scan:
+    uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+    needs: build
+    with:
+      sbom: ${{ needs.build.outputs.sbom }}
+      # images: ${{ needs.build.outputs.imgs }}
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
