@@ -42,8 +42,8 @@ jobs:
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
       #   REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
 
-  job2:
-    name: job 2
+  info:
+    name: getinfo
 
     runs-on: ubuntu-latest
     needs: build

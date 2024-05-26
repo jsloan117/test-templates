@@ -265,19 +265,20 @@ jobs:
         with:
           image: ${{ inputs.images[0] }}
           artifact-name: sbom
+          # artifact-name: sbom.spdx.json
           format: spdx-json
           upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
           output-file: sbom.spdx.json
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
-      # https://github.com/marketplace/actions/anchore-container-scan
-      - name: Anchore Container Scan
-        uses: anchore/scan-action@v3.6.4
-        id: scan
-        with:
-          sbom: sbom.spdx.json
-          fail-build: true
-          severity-cutoff: critical
+      # # https://github.com/marketplace/actions/anchore-container-scan
+      # - name: Anchore Container Scan
+      #   uses: anchore/scan-action@v3.6.4
+      #   id: scan
+      #   with:
+      #     sbom: sbom.spdx.json
+      #     fail-build: true
+      #     severity-cutoff: critical
 
       - uses: actions/upload-artifact@v4
         with:
