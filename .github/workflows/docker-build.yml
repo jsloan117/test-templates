@@ -42,35 +42,35 @@ jobs:
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
       #   REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
 
-  # job2:
-  #   name: job 2
+  job2:
+    name: job 2
 
-  #   runs-on: ubuntu-latest
-  #   needs: build
+    runs-on: ubuntu-latest
+    needs: build
 
-  #   steps:
-  #     - name: check digest
-  #       env:
-  #         digest: ${{ needs.build.outputs.digest }}
-  #         imgs: ${{ needs.build.outputs.imgs }}
-  #         sbom: ${{ needs.build.outputs.sbom }}
-  #         testx: ${{ needs.build.outputs.test }}
-  #       run: |
-  #         echo "digest for image: ${digest}"
-  #         echo
-  #         echo "sbom name: ${sbom}"
-  #         echo
-  #         echo "test var: ${testx}"
-  #         echo
+    steps:
+      - name: check digest
+        env:
+          digest: ${{ needs.build.outputs.digest }}
+          imgs: ${{ needs.build.outputs.imgs }}
+          sbom: ${{ needs.build.outputs.sbom }}
+          testx: ${{ needs.build.outputs.test }}
+        run: |
+          echo "digest for image: ${digest}"
+          echo
+          echo "sbom name: ${sbom}"
+          echo
+          echo "test var: ${testx}"
+          echo
 
-  #         for i in $imgs; do
-  #           echo -e "\nimage_list: $i"
-  #         done
+          for i in $imgs; do
+            echo -e "\nimage_list: $i"
+          done
 
-  #     # https://github.com/marketplace/actions/download-a-build-artifact
-  #     - uses: actions/download-artifact@v4
+      # https://github.com/marketplace/actions/download-a-build-artifact
+      - uses: actions/download-artifact@v4
 
-  #     - run: pwd; ls -lh; ls -lh ./sbom
+      - run: pwd; ls -lh; ls -lh ./sbom
 
   scan:
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
