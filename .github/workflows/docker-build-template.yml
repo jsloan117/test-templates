@@ -198,7 +198,7 @@ jobs:
       - name: Install Cosign
         # don't install on prs
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.4.0
+        uses: sigstore/cosign-installer@v3.5.0
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Set up QEMU
@@ -207,7 +207,7 @@ jobs:
       # https://github.com/marketplace/actions/docker-setup-buildx
       - name: Set up Docker Buildx
         id: bldx
-        uses: docker/setup-buildx-action@v3.0.0
+        uses: docker/setup-buildx-action@v3.3.0
         with:
           install: true
           version: latest
@@ -225,7 +225,7 @@ jobs:
       # https://github.com/marketplace/actions/docker-login
       - name: Login to DockerHub
         if: github.event_name != 'pull_request' && inputs.dockerhub-enable
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3.1.0
         with:
           username: ${{ secrets.dockerhub-username }}
           password: ${{ secrets.dockerhub-token }}
@@ -233,7 +233,7 @@ jobs:
       # https://github.com/marketplace/actions/docker-login
       - name: Login to GHCR
         if: github.event_name != 'pull_request' && inputs.ghcr-enable
-        uses: docker/login-action@v3.0.0
+        uses: docker/login-action@v3.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -241,7 +241,7 @@ jobs:
 
       # https://github.com/marketplace/actions/build-and-push-docker-images
       - name: Build and push
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v5.3.0
         id: build
         with:
           file: ${{ inputs.file }}
@@ -260,7 +260,7 @@ jobs:
 
       # https://github.com/marketplace/actions/anchore-sbom-action
       - name: Anchore SBOM Action
-        uses: anchore/sbom-action@v0.15.8
+        uses: anchore/sbom-action@v0.16.0
         id: sbom
         with:
           image: ${{ inputs.images[0] }}
@@ -347,7 +347,7 @@ jobs:
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload public key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: cosign.pub
           path: cosign.pub
