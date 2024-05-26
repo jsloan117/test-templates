@@ -34,9 +34,10 @@ jobs:
       load: true
       provenance: false
       sbom: false
-      images: |
-        ${{ github.repository }}
-        ghcr.io/${{ github.repository }}
+      images: test-templates
+      # images: |
+      #   ${{ github.repository }}
+      #   ghcr.io/${{ github.repository }}
       # build-args: |
       #   BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
