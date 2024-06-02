@@ -15,7 +15,8 @@ jobs:
     name: docker build v2x
 
     permissions:
-      contents: read
+      actions: read
+      contents: write
       packages: write
 
     # uses: jsloan117/test-templates/.github/workflows/build.yml@main
