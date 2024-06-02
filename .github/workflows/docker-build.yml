@@ -12,7 +12,7 @@ permissions: {}
 
 jobs:
   build:
-    name: docker build v2x
+    name: build
 
     permissions:
       actions: read

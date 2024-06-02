@@ -268,6 +268,7 @@ jobs:
           artifact-name: sbom
           # artifact-name: sbom.spdx.json
           format: spdx-json
+          upload-artifact: true
           upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
           output-file: sbom.spdx.json
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
@@ -349,7 +350,7 @@ jobs:
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload public key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         with:
           name: cosign.pub
           path: cosign.pub
