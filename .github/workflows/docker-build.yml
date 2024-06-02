@@ -1,5 +1,5 @@
 ---
-name: docker build v2
+name: Container Image Builder
 
 on: push
 
@@ -53,15 +53,18 @@ jobs:
       - name: check digest
         env:
           digest: ${{ needs.build.outputs.digest }}
-          imgs: ${{ needs.build.outputs.imgs }}
+          imgs: ${{ needs.build.outputs.image }}
           sbom: ${{ needs.build.outputs.sbom }}
-          testx: ${{ needs.build.outputs.test }}
+          test: ${{ needs.build.outputs.test }}
+          testx: ${{ needs.build.outputs.testx }}
         run: |
           echo "digest for image: ${digest}"
           echo
           echo "sbom name: ${sbom}"
           echo
-          echo "test var: ${testx}"
+          echo "test var: ${test}"
+          echo
+          echo "testx var: ${testx}"
           echo
 
           for i in $imgs; do
@@ -78,7 +81,7 @@ jobs:
     needs: build
     with:
       sbom: ${{ needs.build.outputs.sbom }}
-      # images: ${{ needs.build.outputs.imgs }}
+      # images: ${{ needs.build.outputs.image }}
 
   # scan:
   #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main

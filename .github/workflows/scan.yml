@@ -7,15 +7,13 @@ on:
   workflow_call:
     # allow reuse of this workflow in other repos
     inputs:
-      images:
+      image:
         description: A list of the account/repo names for docker build to push to
-        default: |
-          ${{ github.repository }}
-          ghcr.io/${{ github.repository }}
+        default: ${{ github.repository }}
         required: false
         type: string
 
-      sbom:
+      sbom-file:
         description: sbom file to scan
         default: sbom.spdx.json
         required: false
@@ -61,13 +59,13 @@ jobs:
       #   uses: anchore/sbom-action@v0.15.8
       #   id: sbom
       #   with:
-      #     image: ${{ inputs.images }}
+      #     image: ${{ inputs.image }}
       #     # artifact-name: sbom.spdx
       #     dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
-        id: sbom
+        id: dlsbom
         with:
           name: sbom
           # path: /tmp/sbom.spdx.json
@@ -79,10 +77,11 @@ jobs:
         uses: anchore/scan-action@v3.6.4
         id: scan
         with:
-          # sbom: ${{ inputs.sbom }}
+          # sbom: ${{ inputs.sbom-file }}
           # sbom: ./sbom/sbom.spdx.json
-          sbom: ${{ steps.sbom.outputs.download-path }}/sbom.spdx.json
-          # image: ${{ inputs.images }}
+          # sbom: ${{ steps.dlsbom.outputs.download-path }}/sbom.spdx.json
+          sbom: ${{ steps.dlsbom.outputs.download-path }}/${{ inputs.sbom-file }}
+          # image: ${{ inputs.image }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
 

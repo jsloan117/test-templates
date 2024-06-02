@@ -32,9 +32,6 @@ on:
       images:
         description: A list of the account/repo names for docker build to push to
         default: ${{ github.repository }}
-        # default: |
-        #   ${{ github.repository }}
-        #   ghcr.io/${{ github.repository }}
         required: false
         type: string
 
@@ -154,19 +151,22 @@ on:
 
     outputs:
       digest:
-        description: words and stuff
+        description: image digest
         value: ${{ jobs.build.outputs.digest }}
 
-      imgs:
+      image:
         description: image list
-        value: ${{ jobs.build.outputs.images }}
+        value: ${{ jobs.build.outputs.image }}
 
       sbom:
         description: sbom artifact name
-        value: ${{ jobs.build.outputs.sbomx }}
+        value: ${{ jobs.build.outputs.sbom }}
 
       test:
         value: ${{ inputs.sbom }}
+
+      testx:
+        value: ${{ inputs.images }}
 
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
@@ -180,14 +180,16 @@ jobs:
     # name: build image
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      actions: read
+      # contents: read
+      contents: write
       packages: write
     #   id-token: write
 
     outputs:
       digest: ${{ steps.debug.outputs.digest }}
-      images: ${{ steps.debug.outputs.imglist }}
-      sbomx: ${{ steps.sbom.outputs.sbom }}
+      image: ${{ steps.debug.outputs.imglist }}
+      sbom: ${{ steps.sbom.outputs.sbom }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -206,7 +208,7 @@ jobs:
 
       # https://github.com/marketplace/actions/docker-setup-buildx
       - name: Set up Docker Buildx
-        id: bldx
+        id: buildx
         uses: docker/setup-buildx-action@v3.3.0
         with:
           install: true
@@ -245,8 +247,7 @@ jobs:
         id: build
         with:
           file: ${{ inputs.file }}
-          # platforms: ${{ inputs.platforms }}
-          platforms: ${{ steps.bldx.outputs.platforms }}
+          platforms: ${{ steps.buildx.outputs.platforms }}
           target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
@@ -280,10 +281,10 @@ jobs:
       #     fail-build: true
       #     severity-cutoff: critical
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.spdx.json
+      # # - uses: actions/upload-artifact@v4
+      # #   with:
+      # #     name: sbom
+      # #     path: sbom.spdx.json
 
       - name: debug
         id: debug
