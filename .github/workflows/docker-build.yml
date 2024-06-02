@@ -12,7 +12,7 @@ permissions: {}
 
 jobs:
   build:
-    name: container image
+    # name: build
 
     permissions:
       actions: read
@@ -63,15 +63,14 @@ jobs:
           echo "sbom name: ${sbom}"
           echo
 
-      # https://github.com/marketplace/actions/download-a-build-artifact
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build.outputs.sbom-artifact-name }}
+      # # https://github.com/marketplace/actions/download-a-build-artifact
+      # - uses: actions/download-artifact@v4
+      #   with:
+      #     name: ${{ needs.build.outputs.sbom-artifact-name }}
 
-      - run: pwd; ls -lh
+      # - run: pwd; ls -lh
 
   scan:
-    name: Anchore Container Scan
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
     needs: build
     with:
