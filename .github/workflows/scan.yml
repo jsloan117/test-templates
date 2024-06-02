@@ -67,7 +67,7 @@ jobs:
       - uses: actions/download-artifact@v4
         id: dlsbom
         with:
-          name: sbom
+          name: ${{ inputs.sbom-file }}
           # path: /tmp/sbom.spdx.json
 
       - run: pwd; ls -lhR

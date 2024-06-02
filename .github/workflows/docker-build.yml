@@ -65,6 +65,8 @@ jobs:
 
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.sbom-artifact-name }}
 
       - run: pwd; ls -lh; ls -lh ./sbom
 
