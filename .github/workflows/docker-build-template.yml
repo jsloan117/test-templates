@@ -29,7 +29,7 @@ on:
         required: false
         type: string
 
-      images:
+      image:
         description: A list of the account/repo names for docker build to push to
         default: ${{ github.repository }}
         required: false
@@ -100,7 +100,7 @@ on:
         type: boolean
 
       sbom-artifact-name:
-        description: words
+        description: sbom artifact name
         default: sbom.spdx.json
         required: false
         type: string
@@ -162,18 +162,12 @@ on:
 
       image:
         description: image list
-        value: ${{ jobs.build.outputs.image }}
+        value: ${{ inputs.image }}
 
       sbom-artifact-name:
         description: sbom artifact name
         value: ${{ inputs.sbom-artifact-name }}
         # value: ${{ jobs.build.outputs.sbom }}
-
-      test:
-        value: ${{ inputs.sbom }}
-
-      testx:
-        value: ${{ inputs.images }}
 
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
@@ -195,7 +189,6 @@ jobs:
 
     outputs:
       digest: ${{ steps.debug.outputs.digest }}
-      image: ${{ steps.debug.outputs.imglist }}
       sbom: ${{ steps.sbom.outputs.sbom }}
 
     steps:
@@ -227,7 +220,7 @@ jobs:
         uses: docker/metadata-action@v5.5.1
         id: meta
         with:
-          images: ${{ inputs.images }}
+          images: ${{ inputs.image }}
           flavor: ${{ inputs.flavor }}
           tags: ${{ inputs.tags }}
 
@@ -271,7 +264,7 @@ jobs:
         uses: anchore/sbom-action@v0.16.0
         id: sbom
         with:
-          image: ${{ inputs.images }}
+          image: ${{ inputs.image }}
           # artifact-name: sbom
           artifact-name: ${{ inputs.sbom-artifact-name }}
           format: spdx-json
@@ -304,21 +297,9 @@ jobs:
           #   echo -e "\n\nThe tag is: ${t}"
           # done
 
-          # echo "imglist=${image_list}" >> $GITHUB_OUTPUT
           echo "digest is: ${DIGEST}"
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
-          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${TAGS2}" | awk -F':' '{print $1}' | sort -u); do
-            image_list+="${img} "
-          done
-
-          # for i in $image_list; do
-          #   echo -e "\nimage is: $i"
-          # done
-
-          echo "image list is: ${image_list}"
-          echo "imglist=$image_list" >> $GITHUB_OUTPUT
-          
           docker image ls
         env:
           TAGS: ${{ steps.meta.outputs.tags }}

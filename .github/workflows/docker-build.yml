@@ -35,14 +35,13 @@ jobs:
       load: true
       provenance: false
       sbom: false
-      images: test-templates
-      # images: |
-      #   ${{ github.repository }}
-      #   ghcr.io/${{ github.repository }}
+      image: ${{ github.repository }}
       # build-args: |
       #   BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
       #   REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+
+#ghcr.io/${{ github.repository }}
 
   info:
     name: getinfo
@@ -54,23 +53,15 @@ jobs:
       - name: check digest
         env:
           digest: ${{ needs.build.outputs.digest }}
-          imgs: ${{ needs.build.outputs.image }}
+          image: ${{ needs.build.outputs.image }}
           sbom: ${{ needs.build.outputs.sbom-artifact-name }}
-          test: ${{ needs.build.outputs.test }}
-          testx: ${{ needs.build.outputs.testx }}
         run: |
+          echo "image name: ${image}"
+          echo
           echo "digest for image: ${digest}"
           echo
           echo "sbom name: ${sbom}"
           echo
-          echo "test var: ${test}"
-          echo
-          echo "testx var: ${testx}"
-          echo
-
-          for i in $imgs; do
-            echo -e "\nimage_list: $i"
-          done
 
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
