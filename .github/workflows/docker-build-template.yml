@@ -269,7 +269,7 @@ jobs:
           # artifact-name: sbom.spdx.json
           format: spdx-json
           upload-artifact: true
-          upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
+          # upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
           output-file: sbom.spdx.json
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
