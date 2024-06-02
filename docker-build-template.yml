@@ -271,7 +271,7 @@ jobs:
         uses: anchore/sbom-action@v0.16.0
         id: sbom
         with:
-          image: ${{ inputs.images }}
+          image: ${{ inputs.images[0] }}
           # artifact-name: sbom
           artifact-name: ${{ inputs.sbom-artifact-name }}
           format: spdx-json
