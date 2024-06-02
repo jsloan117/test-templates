@@ -81,7 +81,7 @@ jobs:
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
     needs: build
     with:
-      sbom: ${{ needs.build.outputs.sbom }}
+      sbom-file: ${{ needs.build.outputs.sbom }}
       # images: ${{ needs.build.outputs.image }}
 
   # scan:
