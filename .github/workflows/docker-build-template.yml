@@ -65,6 +65,7 @@ on:
           type=semver,pattern={{major}},enable={{is_default_branch}}
           type=ref,event=branch
           type=ref,event=pr
+          type=raw,value=latest,enable={{is_default_branch}}
         required: false
         type: string
 
