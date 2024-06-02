@@ -71,6 +71,7 @@ jobs:
       - run: pwd; ls -lh
 
   scan:
+    name: Anchore Container Scan
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
     needs: build
     with:
