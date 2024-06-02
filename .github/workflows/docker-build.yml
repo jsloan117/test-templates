@@ -12,7 +12,7 @@ permissions: {}
 
 jobs:
   build:
-    name: build
+    name: container image
 
     permissions:
       actions: read
@@ -68,7 +68,7 @@ jobs:
         with:
           name: ${{ needs.build.outputs.sbom-artifact-name }}
 
-      - run: pwd; ls -lh; ls -lh ./sbom
+      - run: pwd; ls -lh
 
   scan:
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
