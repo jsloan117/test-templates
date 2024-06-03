@@ -177,6 +177,7 @@ permissions: {}
 
 jobs:
   build:
+    name: ''
     # name: build image
     runs-on: ubuntu-latest
     permissions:
