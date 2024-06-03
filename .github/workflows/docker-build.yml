@@ -12,6 +12,7 @@ permissions: {}
 
 jobs:
   build:
+    name: ''
     # name: build
 
     permissions:
@@ -71,6 +72,7 @@ jobs:
   #     # - run: pwd; ls -lh
 
   scan:
+    name: ''
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
     needs: build
     with:
