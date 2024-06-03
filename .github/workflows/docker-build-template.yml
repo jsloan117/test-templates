@@ -177,7 +177,6 @@ permissions: {}
 
 jobs:
   build:
-    # name: build image
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -187,7 +186,7 @@ jobs:
     #   id-token: write
 
     outputs:
-      digest: ${{ steps.debug.outputs.digest }}
+      digest: ${{ steps.envvar.outputs.digest }}
       sbom: ${{ steps.sbom.outputs.sbom }}
 
     steps:
@@ -286,24 +285,24 @@ jobs:
       # #     name: sbom
       # #     path: sbom.spdx.json
 
-      - name: debug
-        id: debug
-        run: |
-          # echo $TAGS
-          # for t in "${TAGS}"; do
-          #   t=$(echo ${t} | awk -F':' '{print $1}')
-          #   image_list+=" ${t}"
-          #   echo -e "\n\nThe tag is: ${t}"
-          # done
+      # - name: debug
+      #   id: debug
+      #   run: |
+      #     # echo $TAGS
+      #     # for t in "${TAGS}"; do
+      #     #   t=$(echo ${t} | awk -F':' '{print $1}')
+      #     #   image_list+=" ${t}"
+      #     #   echo -e "\n\nThe tag is: ${t}"
+      #     # done
 
-          echo "digest is: ${DIGEST}"
-          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+      #     echo "digest is: ${DIGEST}"
+      #     echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
-          docker image ls
-        env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          TAGS2: ${{ steps.meta.outputs.json }}
-          DIGEST: ${{ steps.build.outputs.digest }}
+      #     docker image ls
+      #   env:
+      #     TAGS: ${{ steps.meta.outputs.tags }}
+      #     TAGS2: ${{ steps.meta.outputs.json }}
+      #     DIGEST: ${{ steps.build.outputs.digest }}
 
       - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
