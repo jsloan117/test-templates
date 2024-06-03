@@ -2,8 +2,6 @@
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 # https://docs.github.com/en/actions/learn-github-actions/contexts
 
-# name: docker build and push
-
 on:
   workflow_call:
     # allow reuse of this workflow in other repos
