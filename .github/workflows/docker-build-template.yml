@@ -186,8 +186,9 @@ jobs:
     #   id-token: write
 
     outputs:
-      digest: ${{ steps.envvar.outputs.digest }}
-      sbom: ${{ steps.sbom.outputs.sbom }}
+      # digest: ${{ steps.debug.outputs.digest }}
+      digest: ${{ steps.build.outputs.digest }}
+      # sbom: ${{ steps.sbom.outputs.sbom }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -197,7 +198,7 @@ jobs:
       # https://github.com/marketplace/actions/cosign-installer
       - name: Install Cosign
         # don't install on prs
-        if: github.event_name != 'pull_request'
+        if: (github.event_name != 'pull_request' && inputs.cosign-sign-enable) || (github.event_name != 'pull_request' && inputs.cosign-verify-enable)
         uses: sigstore/cosign-installer@v3.5.0
 
       # https://github.com/marketplace/actions/docker-setup-qemu
@@ -225,7 +226,7 @@ jobs:
       # https://github.com/marketplace/actions/docker-login
       - name: Login to DockerHub
         if: github.event_name != 'pull_request' && inputs.dockerhub-enable
-        uses: docker/login-action@v3.1.0
+        uses: docker/login-action@v3.2.0
         with:
           username: ${{ secrets.dockerhub-username }}
           password: ${{ secrets.dockerhub-token }}
@@ -233,7 +234,7 @@ jobs:
       # https://github.com/marketplace/actions/docker-login
       - name: Login to GHCR
         if: github.event_name != 'pull_request' && inputs.ghcr-enable
-        uses: docker/login-action@v3.1.0
+        uses: docker/login-action@v3.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
