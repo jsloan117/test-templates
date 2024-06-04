@@ -1,6 +1,8 @@
 ---
 # container image security scan using Anchore
 
+name: Anchore Container Scan
+
 on:
   workflow_call:
     # allow reuse of this workflow in other repos
