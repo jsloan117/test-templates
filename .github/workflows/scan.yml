@@ -1,14 +1,14 @@
 ---
 # container image security scan using Anchore
 
-name: Anchore Container Scan
+name: acs
 
 on:
   workflow_call:
     # allow reuse of this workflow in other repos
     inputs:
       image:
-        description: A list of the account/repo names for docker build to push to
+        description: image to scan
         default: ${{ github.repository }}
         required: false
         type: string
@@ -19,22 +19,21 @@ on:
         required: false
         type: string
 
-      # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
-      sbom-snapshot-enable:
-        description: Whether to upload the SBOM to the GitHub Dependency submission API
-        default: false
-        required: false
-        type: boolean
-
       fail-build:
-        description: Fail the build if a vulnerability is found with a higher severity. That severity defaults to medium and can be set with severity-cutoff.
+        description: fail the build if a vulnerability is found with a higher severity. that severity defaults to medium and can be set with severity-cutoff.
         default: true
         required: false
         type: boolean
 
       severity-cutoff:
-        description: Minimum vulnerability severity to trigger a failure. Valid choices are "negligible", "low", "medium", "high" and "critical".
+        description: minimum vulnerability severity to trigger a failure. valid choices are "negligible", "low", "medium", "high" and "critical".
         default: critical
+        required: false
+        type: string
+
+      output-format:
+        description: anchore scan output format
+        default: sarif
         required: false
         type: string
 
@@ -42,9 +41,6 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     permissions: {}
-      # contents: read
-      # packages: write
-      # id-token: write
 
     steps:
       # https://github.com/marketplace/actions/download-a-build-artifact
@@ -53,28 +49,24 @@ jobs:
         with:
           name: ${{ inputs.sbom-file }}
 
-      - run: pwd; ls -lhR
-
       # https://github.com/marketplace/actions/anchore-container-scan
       - name: Anchore Container Scan
         uses: anchore/scan-action@v3.6.4
         id: scan
         with:
-          # sbom: ${{ inputs.sbom-file }}
-          # sbom: ./sbom/sbom.spdx.json
-          # sbom: ${{ steps.dlsbom.outputs.download-path }}/sbom.spdx.json
           sbom: ${{ steps.dlsbom.outputs.download-path }}/${{ inputs.sbom-file }}
           # image: ${{ inputs.image }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
+          output-format: ${{ inputs.output-format }}
 
-      # # https://github.com/github/codeql-action
-      # # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
-      # - name: Upload Anchore scan SARIF report
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: ${{ steps.scan.outputs.sarif }}
-      #     wait-for-processing: true
+      # https://github.com/github/codeql-action
+      # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
+      - name: Upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+          wait-for-processing: true
 
       # - name: Set Sarif Report artifact variable
       #   run: |
@@ -82,11 +74,11 @@ jobs:
       #   env:
       #     image_tag: ${{ steps.meta.outputs.tags }}
 
-      # # https://github.com/marketplace/actions/upload-a-build-artifact
-      # - name: Upload Sarif Report
-      #   uses: actions/upload-artifact@v4.3.0
-      #   with:
-      #     name: ${{ env.sarif_artifact }}
-      #     path: ${{ steps.scan.outputs.sarif }}
-      #     if-no-files-found: warn
+      # https://github.com/marketplace/actions/upload-a-build-artifact
+      - name: Upload Sarif Report
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          # name: ${{ env.sarif_artifact }}
+          path: ${{ steps.scan.outputs.sarif }}
+          if-no-files-found: warn
 

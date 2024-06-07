@@ -2,28 +2,28 @@
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 # https://docs.github.com/en/actions/learn-github-actions/contexts
 
-name: docker-build-template
-run-name: CIB
+# container image  builder template
+name: cib-template
 
 on:
   workflow_call:
     # allow reuse of this workflow in other repos
     inputs:
       context:
-        description: Docker context (path) to start build from
+        description: docker context (path) to start build from
         default: .
         required: false
         type: string
 
       file:
-        description: Dockerfile to build, relative to context path
+        description: dockerfile to build, relative to context path
         default: Dockerfile
         required: false
         type: string
 
       flavor:
         # https://github.com/marketplace/actions/docker-metadata-action#flavor-input
-        description: Three rules to (optionally) set for tag-rules, latest, prefix, and suffix
+        description: three rules to (optionally) set for tag-rules, latest, prefix, and suffix
         # will tag latest on a git tag push, or if you add a type=semver or type=match tag-rules
         # NOTE: if you are seeing `latest` retagged when you don't expect it, set this latest=false
         default: latest=auto
@@ -31,7 +31,7 @@ on:
         type: string
 
       image:
-        description: A list of the account/repo names for docker build to push to
+        description: image name to build
         default: ${{ github.repository }}
         required: false
         type: string
@@ -39,27 +39,27 @@ on:
       platforms:
         # https://github.com/marketplace/actions/build-and-push-docker-images#inputs
         # https://docs.docker.com/engine/reference/commandline/buildx_build/#platform
-        description: Platforms to build for
+        description: platforms to build
         # common ones: linux/amd64,linux/arm64,linux/arm/v7
         default: linux/amd64
         required: false
         type: string
 
       push:
-        description: Push image to registry(s)
+        description: push image to registry(s)
         default: true
         required: false
         type: boolean
 
       load:
-        description: Load image locally
+        description: load image locally
         default: false
         required: false
         type: boolean
 
       tags:
         # https://github.com/marketplace/actions/docker-metadata-action#tags-input
-        description: Use docker-metadata action to create tags from a key-value pair list in CSV format
+        description: use docker-metadata action to create tags from a key-value pair list in csv format
         default: |
           type=semver,pattern={{version}},enable={{is_default_branch}}
           type=semver,pattern={{major}}.{{minor}},enable={{is_default_branch}}
@@ -71,32 +71,32 @@ on:
         type: string
 
       target:
-        description: Build stage to target
+        description: build stage to target
         required: false
         type: string
 
       dockerhub-enable:
-        description: Log into Docker Hub
+        description: login to dockerhub
         default: false
         required: false
         type: boolean
 
       ghcr-enable:
-        description: Log into GHCR
+        description: login to ghcr
         default: true
         required: false
         type: boolean
 
       # https://docs.docker.com/build/attestations/slsa-provenance/
       provenance:
-        description: Generate provenance attestation for the build
+        description: generate provenance attestation for the build
         default: true
         required: false
         type: boolean
 
       # https://docs.docker.com/build/attestations/sbom/
       sbom:
-        description: Generate SBOM attestation for the build
+        description: generate sbom attestation for the build
         default: true
         required: false
         type: boolean
@@ -109,53 +109,36 @@ on:
 
       # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
       sbom-snapshot-enable:
-        description: Whether to upload the SBOM to the GitHub Dependency submission API
+        description: whether to upload the sbom to the gitHub dependency submission api
         default: false
         required: false
         type: boolean
 
+      sbom-upload-artifact:
+        description: whether to upload the sbom as an artifact
+        default: true
+        required: false
+        type: boolean
+
+      sbom-file-format:
+        description: sbom file format
+        default: spdx-json
+        required: false
+        type: string
+
       build-args:
-        description: Docker build arguments
+        description: build arguments
         default: ''
         required: false
         type: string
 
-      cosign-sign-enable:
-        description: Enable cosign signing
-        default: false
-        required: false
-        type: boolean
-
-      cosign-verify-enable:
-        description: Enable cosign verifying
-        default: false
-        required: false
-        type: boolean
-
-      cosign-upload-key:
-        description: Enable cosign upload key
-        default: false
-        required: false
-        type: boolean
-
     secrets:
       dockerhub-username:
-        description: Docker Hub username
+        description: docker hub username
         required: false
       dockerhub-token:
-        description: Docker Hub token
+        description: docker hub token
         required: false
-      cosign-key:
-        description: Cosign private key
-        required: false
-      cosign-password:
-        description: Cosign private key password
-        required: false
-
-    # outputs:
-    #   image-tag:
-    #     description: "single-use image tag for GHA runs"
-    #     value: ${{ jobs.build.outputs.image-tag }}
 
     outputs:
       digest:
@@ -163,13 +146,20 @@ on:
         value: ${{ jobs.build.outputs.digest }}
 
       image:
-        description: image list
+        description: image name
         value: ${{ inputs.image }}
 
       sbom-artifact-name:
         description: sbom artifact name
         value: ${{ inputs.sbom-artifact-name }}
-        # value: ${{ jobs.build.outputs.sbom }}
+
+      tags:
+        description: metadata tags
+        value: ${{ jobs.build.outputs.tags }}
+
+      version:
+        description: metadata version
+        value: ${{ jobs.build.outputs.version }}
 
 # set permissions here for what's required to run this Reusable Workflow
 # However, permisions are set in the GITHUB_TOKEN by the **calling** workflow
@@ -189,20 +179,14 @@ jobs:
     #   id-token: write
 
     outputs:
-      # digest: ${{ steps.debug.outputs.digest }}
       digest: ${{ steps.build.outputs.digest }}
-      # sbom: ${{ steps.sbom.outputs.sbom }}
+      tags: ${{ steps.meta.outputs.tags }}
+      version: ${{ steps.meta.outputs.version }}
 
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
         uses: actions/checkout@v4
-
-      # https://github.com/marketplace/actions/cosign-installer
-      - name: Install Cosign
-        # don't install on prs
-        if: (github.event_name != 'pull_request' && inputs.cosign-sign-enable) || (github.event_name != 'pull_request' && inputs.cosign-verify-enable)
-        uses: sigstore/cosign-installer@v3.5.0
 
       # https://github.com/marketplace/actions/docker-setup-qemu
       - name: Set up QEMU
@@ -269,84 +253,9 @@ jobs:
           image: ${{ inputs.image }}
           # artifact-name: sbom
           artifact-name: ${{ inputs.sbom-artifact-name }}
-          format: spdx-json
-          upload-artifact: true
+          format: ${{ inputs.sbom-file-format }}
+          upload-artifact: ${{ inputs.sbom-upload-artifact }}
           # upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
           # output-file: sbom.spdx.json
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 
-      # # https://github.com/marketplace/actions/anchore-container-scan
-      # - name: Anchore Container Scan
-      #   uses: anchore/scan-action@v3.6.4
-      #   id: scan
-      #   with:
-      #     sbom: sbom.spdx.json
-      #     fail-build: true
-      #     severity-cutoff: critical
-
-      # # - uses: actions/upload-artifact@v4
-      # #   with:
-      # #     name: sbom
-      # #     path: sbom.spdx.json
-
-      # - name: debug
-      #   id: debug
-      #   run: |
-      #     # echo $TAGS
-      #     # for t in "${TAGS}"; do
-      #     #   t=$(echo ${t} | awk -F':' '{print $1}')
-      #     #   image_list+=" ${t}"
-      #     #   echo -e "\n\nThe tag is: ${t}"
-      #     # done
-
-      #     echo "digest is: ${DIGEST}"
-      #     echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
-
-      #     docker image ls
-      #   env:
-      #     TAGS: ${{ steps.meta.outputs.tags }}
-      #     TAGS2: ${{ steps.meta.outputs.json }}
-      #     DIGEST: ${{ steps.build.outputs.digest }}
-
-      - name: Sign Image
-        if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
-        run: |
-          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
-            cosign sign -y --key env://COSIGN_KEY --recursive \
-              -a "repo=${{ github.repository }}" \
-              -a "workflow=${{ github.workflow }}" \
-              -a "ref=${{ github.sha }}" \
-              -a "ref=${{ github.ref_name }}" \
-              ${img}@${DIGEST}
-          done
-        env:
-          DIGEST: ${{ steps.build.outputs.digest }}
-          JSON: ${{ steps.meta.outputs.json }}
-          COSIGN_KEY: ${{ secrets.cosign-key }}
-          COSIGN_PASSWORD: ${{ secrets.cosign-password }}
-
-      - name: Verify Image
-        if: github.event_name != 'pull_request' && inputs.cosign-verify-enable
-        run: |
-          printf '%s' "${COSIGN_PUBLIC_KEY}" > cosign.pub
-          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
-            cosign verify --key env://COSIGN_PUBLIC_KEY ${img}@${DIGEST} | jq
-          done
-        env:
-          DIGEST: ${{ steps.build.outputs.digest }}
-          JSON: ${{ steps.meta.outputs.json }}
-          COSIGN_PUBLIC_KEY: ${{ vars.COSIGN_PUB }}
-
-      # https://github.com/marketplace/actions/upload-a-build-artifact
-      - name: Upload public key
-        if: github.event_name != 'pull_request' && inputs.cosign-upload-key
-        uses: actions/upload-artifact@v4
-        with:
-          name: cosign.pub
-          path: cosign.pub
-          if-no-files-found: warn
-
-      # - name: test
-      #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-      #   with:
-      #     images: ${{ steps.meta.outputs.json }}

@@ -1,5 +1,5 @@
 ---
-name: Container Image Builder
+name: container image builder
 
 on: push
 
@@ -17,18 +17,13 @@ jobs:
       contents: write
       packages: write
 
-    # uses: jsloan117/test-templates/.github/workflows/build.yml@main
+    # uses: jsloan117/test-templates/.github/workflows/docker-build-template.yml@main
     uses: ./.github/workflows/docker-build-template.yml
     secrets:
       dockerhub-username: ${{ github.actor }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-      cosign-key: ${{ secrets.COSIGN_KEY }}
-      cosign-password: ${{ secrets.COSIGN_KEYPASS }}
     with:
-      dockerhub-enable: true
-      cosign-sign-enable: false
-      cosign-verify-enable: false
-      cosign-upload-key: false
+      dockerhub-enable: false
       push: false
       load: true
       provenance: false
@@ -39,45 +34,28 @@ jobs:
       #   VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
       #   REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
 
-#ghcr.io/${{ github.repository }}
-
-  # info:
-  #   name: getinfo
-
-  #   runs-on: ubuntu-latest
-  #   needs: build
-
-  #   steps:
-  #     - name: check digest
-  #       env:
-  #         digest: ${{ needs.build.outputs.digest }}
-  #         image: ${{ needs.build.outputs.image }}
-  #         sbom: ${{ needs.build.outputs.sbom-artifact-name }}
-  #       run: |
-  #         echo "image name: ${image}"
-  #         echo
-  #         echo "digest for image: ${digest}"
-  #         echo
-  #         echo "sbom name: ${sbom}"
-  #         echo
-
-  #     # # https://github.com/marketplace/actions/download-a-build-artifact
-  #     # - uses: actions/download-artifact@v4
-  #     #   with:
-  #     #     name: ${{ needs.build.outputs.sbom-artifact-name }}
-
-  #     # - run: pwd; ls -lh
-
   scan:
-    uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+    # uses: jsloan117/test-templates/.github/workflows/scan.yml@main
+    uses: ./.github/workflows/scan.yml
     needs: build
     with:
       sbom-file: ${{ needs.build.outputs.sbom-artifact-name }}
-      # images: ${{ needs.build.outputs.image }}
 
-  # scan:
-  #   uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-  #   needs: build
-  #   with:
-  #     images: ${{ steps.meta.outputs.json }}
+  sign:
+    # uses: jsloan117/test-templates/.github/workflows/sign.yml@main
+    uses: ./.github/workflows/sign.yml
+    needs: build
+    secrets:
+      cosign-key: ${{ secrets.COSIGN_KEY }}
+      cosign-password: ${{ secrets.COSIGN_KEYPASS }}
+      dockerhub-username: ${{ github.actor }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      image: ${{ needs.build.outputs.image }}
+      digest: ${{ needs.build.outputs.digest }}
+      cosign-sign-enable: false
+      cosign-verify-enable: false
+      cosign-upload-key: false
+      dockerhub-enable: false
+      ghcr-enable: true
 

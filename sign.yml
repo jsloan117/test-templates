@@ -13,11 +13,18 @@ on:
         required: false
         type: string
 
-      digest:
-        description: image digest
-        default: ''
-        required: false
-        type: string
+      # sbom-file:
+      #   description: sbom file to scan
+      #   default: sbom.spdx.json
+      #   required: false
+      #   type: string
+
+      # # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
+      # sbom-snapshot-enable:
+      #   description: Whether to upload the SBOM to the GitHub Dependency submission API
+      #   default: false
+      #   required: false
+      #   type: boolean
 
       cosign-sign-enable:
         description: Enable cosign signing
@@ -34,18 +41,6 @@ on:
       cosign-upload-key:
         description: Enable cosign upload key
         default: false
-        required: false
-        type: boolean
-
-      dockerhub-enable:
-        description: Log into Docker Hub
-        default: false
-        required: false
-        type: boolean
-
-      ghcr-enable:
-        description: Log into GHCR
-        default: true
         required: false
         type: boolean
 
@@ -67,58 +62,50 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     permissions: {}
+      # contents: read
+      # packages: write
+      # id-token: write
 
     steps:
-      # https://github.com/marketplace/actions/cosign-installer
-      - name: Install Cosign
-        # don't install on prs
-        if: (github.event_name != 'pull_request' && inputs.cosign-sign-enable) || (github.event_name != 'pull_request' && inputs.cosign-verify-enable)
-        uses: sigstore/cosign-installer@v3.5.0
-
-      # https://github.com/marketplace/actions/docker-login
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request' && inputs.dockerhub-enable
-        uses: docker/login-action@v3.2.0
+      # https://github.com/marketplace/actions/download-a-build-artifact
+      - uses: actions/download-artifact@v4
+        id: dlsbom
         with:
-          username: ${{ secrets.dockerhub-username }}
-          password: ${{ secrets.dockerhub-token }}
+          name: ${{ inputs.sbom-file }}
 
-      # https://github.com/marketplace/actions/docker-login
-      - name: Login to GHCR
-        if: github.event_name != 'pull_request' && inputs.ghcr-enable
-        uses: docker/login-action@v3.2.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: pwd; ls -lhR
 
-      - name: sign image
+      - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
         run: |
-          cosign sign -y -r --key env://COSIGN_KEY \
-            -a "repo=${{ github.repository }}" \
-            -a "workflow=${{ github.workflow }}" \
-            -a "ref=${{ github.sha }}" \
-            -a "ref=${{ github.ref_name }}" \
-            ${IMAGE}@${DIGEST}
+          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
+            cosign sign -y --key env://COSIGN_KEY --recursive \
+              -a "repo=${{ github.repository }}" \
+              -a "workflow=${{ github.workflow }}" \
+              -a "ref=${{ github.sha }}" \
+              -a "ref=${{ github.ref_name }}" \
+              ${img}@${DIGEST}
+          done
         env:
-          IMAGE: ${{ inputs.image }}
-          DIGEST: ${{ inputs.digest }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+          JSON: ${{ steps.meta.outputs.json }}
           COSIGN_KEY: ${{ secrets.cosign-key }}
           COSIGN_PASSWORD: ${{ secrets.cosign-password }}
 
-      - name: verify image
+      - name: Verify Image
         if: github.event_name != 'pull_request' && inputs.cosign-verify-enable
         run: |
           printf '%s' "${COSIGN_PUBLIC_KEY}" > cosign.pub
-          cosign verify --key env://COSIGN_PUBLIC_KEY ${IMAGE}@${DIGEST} | jq
+          for img in $(jq -r '.tags[] | split(",";"") | .[]' <<< "${JSON}" | awk -F':' '{print $1}' | sort -u); do
+            cosign verify --key env://COSIGN_PUBLIC_KEY ${img}@${DIGEST} | jq
+          done
         env:
-          IMAGE: ${{ inputs.image }}
-          DIGEST: ${{ inputs.digest }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+          JSON: ${{ steps.meta.outputs.json }}
           COSIGN_PUBLIC_KEY: ${{ vars.COSIGN_PUB }}
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
-      - name: upload public key
+      - name: Upload public key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
         uses: actions/upload-artifact@v4
         with:
