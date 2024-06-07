@@ -38,6 +38,7 @@ jobs:
     permissions:
       actions: read
       contents: read
+      security-events: write
 
     # uses: jsloan117/test-templates/.github/workflows/scan.yml@main
     uses: ./.github/workflows/scan.yml
@@ -49,7 +50,6 @@ jobs:
     permissions:
       actions: read
       contents: read
-      security-events: write
 
     # uses: jsloan117/test-templates/.github/workflows/sign.yml@main
     uses: ./.github/workflows/sign.yml
