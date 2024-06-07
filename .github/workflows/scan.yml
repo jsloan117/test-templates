@@ -40,7 +40,9 @@ on:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    permissions: {}
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
       # https://github.com/marketplace/actions/download-a-build-artifact
