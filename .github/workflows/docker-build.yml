@@ -24,8 +24,8 @@ jobs:
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
     with:
       dockerhub-enable: false
-      push: false
-      load: true
+      push: true
+      # load: true
       provenance: false
       sbom: false
       image: ${{ github.repository }}

@@ -47,12 +47,14 @@ on:
       push:
         description: push image to registry(s)
         default: true
+        # default: ${{ github.event_name != 'pull_request' }}
         required: false
         type: boolean
 
       load:
         description: load image locally
         default: false
+        # default: ${{ github.event_name == 'pull_request' }}
         required: false
         type: boolean
 
@@ -240,7 +242,8 @@ jobs:
             VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
             REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
-          load: ${{ inputs.load }}
+          # load: ${{ inputs.load }}
+          load: ${{ inputs.load || github.event_name == 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ github.workflow }}
