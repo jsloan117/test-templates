@@ -59,6 +59,8 @@ on:
         description: URL to download the artifact
         value: ${{ jobs.scan.outputs.sarif-artifact-url }}
 
+permissions: {}
+
 jobs:
   scan:
     runs-on: ubuntu-latest

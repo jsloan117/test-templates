@@ -72,6 +72,8 @@ on:
         description: URL to download the artifact
         value: ${{ jobs.scan.outputs.publickey-artifact-url }}
 
+permissions: {}
+
 jobs:
   scan:
     runs-on: ubuntu-latest

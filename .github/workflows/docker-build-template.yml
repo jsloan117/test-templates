@@ -176,7 +176,6 @@ jobs:
       actions: read
       contents: write
       packages: write
-    #   id-token: write
 
     outputs:
       digest: ${{ steps.build.outputs.digest }}
@@ -247,8 +246,6 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
           provenance: ${{ inputs.provenance }}
           sbom: ${{ inputs.sbom }}
-          # don't use cache on PRs
-          # no-cache: ${{ github.event_name == 'pull_request' || inputs.no-cache }}
 
       # https://github.com/marketplace/actions/anchore-sbom-action
       - name: Anchore SBOM Action
