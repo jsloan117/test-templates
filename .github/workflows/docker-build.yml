@@ -60,9 +60,5 @@ jobs:
     with:
       image: ${{ needs.build.outputs.image }}
       digest: ${{ needs.build.outputs.digest }}
-      cosign-sign-enable: false
-      cosign-verify-enable: false
-      cosign-upload-key: false
       dockerhub-enable: false
-      ghcr-enable: true
 
