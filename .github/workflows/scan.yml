@@ -16,6 +16,12 @@ on:
         required: false
         type: string
 
+      github-sha:
+        description: github sha to pass in to CodeQL
+        default: ${{ github.sha }}
+        required: false
+        type: string
+
       fail-build:
         description: fail the build if a vulnerability is found with a higher severity. that severity defaults to medium and can be set with severity-cutoff.
         default: true
@@ -103,6 +109,8 @@ jobs:
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
           wait-for-processing: true
+        env:
+          GITHUB_SHA: ${{ github.sha }}
 
       # - name: Set Sarif Report artifact variable
       #   run: |
