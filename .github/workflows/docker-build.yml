@@ -45,7 +45,6 @@ jobs:
     needs: build
     with:
       sbom-file: ${{ needs.build.outputs.sbom-artifact-name }}
-      # github-sha: ${{ github.sha }}
 
   sign:
     permissions:
