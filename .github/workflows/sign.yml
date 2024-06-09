@@ -18,19 +18,19 @@ on:
 
       cosign-sign-enable:
         description: enable cosign signing
-        default: false
+        default: true
         required: false
         type: boolean
 
       cosign-verify-enable:
         description: enable cosign verifying
-        default: false
+        default: true
         required: false
         type: boolean
 
       cosign-upload-key:
         description: enable cosign upload key
-        default: false
+        default: true
         required: false
         type: boolean
 

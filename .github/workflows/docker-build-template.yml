@@ -138,11 +138,12 @@ on:
         type: boolean
 
     secrets:
-      dockerhub-username:
-        description: dockerhub username
-        required: false
       dockerhub-token:
         description: dockerhub token
+        required: false
+
+      dockerhub-username:
+        description: dockerhub username
         required: false
 
     outputs:
