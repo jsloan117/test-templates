@@ -4,12 +4,6 @@ name: acs
 on:
   workflow_call:
     inputs:
-      image:
-        description: image to scan
-        default: ${{ github.repository }}
-        required: false
-        type: string
-
       sbom-file:
         description: sbom file to scan
         default: sbom.spdx.json
@@ -42,7 +36,7 @@ on:
 
       artifact_name:
         description: uploaded artifact name
-        default: ${{ github.ref_name }}
+        default: ${{ github.ref_name }}-${{ github.sha }}
         required: false
         type: string
 
@@ -94,7 +88,6 @@ jobs:
         id: scan
         with:
           sbom: ${{ steps.dlsbom.outputs.download-path }}/${{ inputs.sbom-file }}
-          # image: ${{ inputs.image }}
           fail-build: ${{ inputs.fail-build }}
           severity-cutoff: ${{ inputs.severity-cutoff }}
           output-format: ${{ inputs.output-format }}
@@ -108,18 +101,11 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
           wait-for-processing: true
 
-      # - name: Set Sarif Report artifact variable
-      #   run: |
-      #     echo "sarif_artifact=$(echo ${image_tag} | sed -e 's|/|-|g' -e 's|:|_|g').sarif" >> $GITHUB_ENV
-      #   env:
-      #     image_tag: ${{ steps.meta.outputs.tags }}
-
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload Sarif Report
         uses: actions/upload-artifact@v4
         id: upload
         with:
-          # name: ${{ env.sarif_artifact }}
           name: ${{ inputs.artifact_name }}
           path: ${{ steps.scan.outputs.sarif }}
           if-no-files-found: ${{ inputs.if-no-files-found }}

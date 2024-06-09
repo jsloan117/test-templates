@@ -234,7 +234,11 @@ jobs:
           file: ${{ inputs.file }}
           platforms: ${{ steps.buildx.outputs.platforms }}
           target: ${{ inputs.target }}
-          build-args: ${{ inputs.build-args }}
+          # build-args: ${{ inputs.build-args }}
+          build-args: |
+            BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+            REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
           push: ${{ github.event_name != 'pull_request' && inputs.push }}
           load: ${{ inputs.load }}
           tags: ${{ steps.meta.outputs.tags }}
