@@ -84,6 +84,10 @@ jobs:
       sarif-artifact-url: ${{ steps.upload.outputs.artifact-url }}
 
     steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@v4
+
       # https://github.com/marketplace/actions/download-a-build-artifact
       - uses: actions/download-artifact@v4
         id: dlsbom
