@@ -1,11 +1,8 @@
 ---
-# container image security scan using Anchore
-
 name: acs
 
 on:
   workflow_call:
-    # allow reuse of this workflow in other repos
     inputs:
       image:
         description: image to scan
@@ -37,12 +34,48 @@ on:
         required: false
         type: string
 
+      if-no-files-found:
+        description: action taken if no file
+        default: warn
+        required: false
+        type: string
+
+      artifact_name:
+        description: uploaded artifact name
+        default: github.ref_name
+        required: false
+        type: string
+
+      artifact_overwrite:
+        description: whether to overwrite the artifact
+        default: true
+        required: false
+        type: boolean
+
+    outputs:
+      sarif-id:
+        description: The ID of the uploaded SARIF file.
+        value: ${{ jobs.scan.outputs.sarif-id }}
+
+      sarif-artifact-id:
+        description: GitHub ID of an Artifact, can be used by the REST API
+        value: ${{ jobs.scan.outputs.sarif-artifact-id }}
+
+      sarif-artifact-url:
+        description: URL to download the artifact
+        value: ${{ jobs.scan.outputs.sarif-artifact-url }}
+
 jobs:
   scan:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
+
+    outputs:
+      sarif-id: ${{ steps.codeql.outputs.sarif-id }}
+      sarif-artifact-id: ${{ steps.upload.outputs.artifact-id }}
+      sarif-artifact-url: ${{ steps.upload.outputs.artifact-url }}
 
     steps:
       # https://github.com/marketplace/actions/download-a-build-artifact
@@ -64,8 +97,9 @@ jobs:
 
       # https://github.com/github/codeql-action
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
-      - name: Upload Anchore scan SARIF report
+      - name: CodeQL Upload SARIF Report
         uses: github/codeql-action/upload-sarif@v3
+        id: codeql
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
           wait-for-processing: true
@@ -78,9 +112,12 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload Sarif Report
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4
+        id: upload
         with:
           # name: ${{ env.sarif_artifact }}
+          name: ${{ inputs.artifact_name }}
           path: ${{ steps.scan.outputs.sarif }}
-          if-no-files-found: warn
+          if-no-files-found: ${{ inputs.if-no-files-found }}
+          overwrite: ${{ inputs.artifact_overwrite }}
 

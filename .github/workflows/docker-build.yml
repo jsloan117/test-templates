@@ -51,6 +51,8 @@ jobs:
       actions: read
       contents: read
 
+    if: github.event_name != 'pull_request'
+
     # uses: jsloan117/test-templates/.github/workflows/sign.yml@main
     uses: ./.github/workflows/sign.yml
     needs: build

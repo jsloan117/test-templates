@@ -2,12 +2,11 @@
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 # https://docs.github.com/en/actions/learn-github-actions/contexts
 
-# container image  builder template
+# container image builder template
 name: cib-template
 
 on:
   workflow_call:
-    # allow reuse of this workflow in other repos
     inputs:
       context:
         description: docker context (path) to start build from
@@ -109,7 +108,7 @@ on:
 
       # https://github.com/anchore/sbom-action?tab=readme-ov-file#anchoresbom-action
       sbom-snapshot-enable:
-        description: whether to upload the sbom to the gitHub dependency submission api
+        description: whether to upload the sbom to the github dependency submission api
         default: false
         required: false
         type: boolean
@@ -127,17 +126,23 @@ on:
         type: string
 
       build-args:
-        description: build arguments
+        description: set build time variables
         default: ''
         required: false
         type: string
 
+      no-cache:
+        description: use cache or not
+        default: false
+        required: false
+        type: boolean
+
     secrets:
       dockerhub-username:
-        description: docker hub username
+        description: dockerhub username
         required: false
       dockerhub-token:
-        description: docker hub token
+        description: dockerhub token
         required: false
 
     outputs:
@@ -154,7 +159,7 @@ on:
         value: ${{ inputs.sbom-artifact-name }}
 
       version:
-        description: metadata version
+        description: docker metadata version
         value: ${{ jobs.build.outputs.version }}
 
 # set permissions here for what's required to run this Reusable Workflow
@@ -169,7 +174,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      # contents: read
       contents: write
       packages: write
     #   id-token: write
@@ -239,6 +243,8 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ github.workflow }}
           provenance: ${{ inputs.provenance }}
           sbom: ${{ inputs.sbom }}
+          # don't use cache on PRs
+          # no-cache: ${{ github.event_name == 'pull_request' || inputs.no-cache }}
 
       # https://github.com/marketplace/actions/anchore-sbom-action
       - name: Anchore SBOM Action
@@ -246,11 +252,8 @@ jobs:
         id: sbom
         with:
           image: ${{ inputs.image }}
-          # artifact-name: sbom
           artifact-name: ${{ inputs.sbom-artifact-name }}
           format: ${{ inputs.sbom-file-format }}
           upload-artifact: ${{ inputs.sbom-upload-artifact }}
-          # upload-artifact: false # REVIEW: for w/e reason the jobs after this  one can't see this artifact its there at the end though
-          # output-file: sbom.spdx.json
           dependency-snapshot: ${{ inputs.sbom-snapshot-enable }}
 

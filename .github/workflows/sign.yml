@@ -1,83 +1,95 @@
 ---
-# container image security scan using Anchore
-
 name: cosign
 
 on:
   workflow_call:
-    # allow reuse of this workflow in other repos
     inputs:
       image:
-        description: A list of the account/repo names for docker build to push to
+        description: image to sign/verify
         default: ${{ github.repository }}
         required: false
         type: string
 
       digest:
-        description: image digest
+        description: digest to sign/verify
         default: ''
         required: false
         type: string
 
       cosign-sign-enable:
-        description: Enable cosign signing
+        description: enable cosign signing
         default: false
         required: false
         type: boolean
 
       cosign-verify-enable:
-        description: Enable cosign verifying
+        description: enable cosign verifying
         default: false
         required: false
         type: boolean
 
       cosign-upload-key:
-        description: Enable cosign upload key
+        description: enable cosign upload key
         default: false
         required: false
         type: boolean
 
       dockerhub-enable:
-        description: Log into Docker Hub
+        description: login to dockerhub
         default: false
         required: false
         type: boolean
 
       ghcr-enable:
-        description: Log into GHCR
+        description: login to ghcr
         default: true
         required: false
         type: boolean
 
     secrets:
-      dockerhub-username:
-        description: Docker Hub username
-        required: false
-      dockerhub-token:
-        description: Docker Hub token
-        required: false
       cosign-key:
-        description: Cosign private key
+        description: cosign private key
         required: false
+
       cosign-password:
-        description: Cosign private key password
+        description: cosign private key password
         required: false
+
+      dockerhub-token:
+        description: dockerhub token
+        required: false
+
+      dockerhub-username:
+        description: dockerhub username
+        required: false
+
+    outputs:
+      publickey-artifact-id:
+        description: GitHub ID of an Artifact, can be used by the REST API
+        value: ${{ jobs.scan.outputs.publickey-artifact-id }}
+
+      publickey-artifact-url:
+        description: URL to download the artifact
+        value: ${{ jobs.scan.outputs.publickey-artifact-url }}
 
 jobs:
   scan:
     runs-on: ubuntu-latest
     permissions: {}
 
+    outputs:
+      publickey-artifact-id: ${{ steps.upload.outputs.artifact-id }}
+      publickey-artifact-url: ${{ steps.upload.outputs.artifact-url }}
+
     steps:
       # https://github.com/marketplace/actions/cosign-installer
       - name: Install Cosign
-        # don't install on prs
         if: (github.event_name != 'pull_request' && inputs.cosign-sign-enable) || (github.event_name != 'pull_request' && inputs.cosign-verify-enable)
         uses: sigstore/cosign-installer@v3.5.0
 
       # https://github.com/marketplace/actions/docker-login
       - name: Login to DockerHub
-        if: github.event_name != 'pull_request' && inputs.dockerhub-enable
+        if: github.event_name != 'pull_request' && inputs.dockerhub-enable && inputs.cosign-sign-enable
         uses: docker/login-action@v3.2.0
         with:
           username: ${{ secrets.dockerhub-username }}
@@ -85,14 +97,14 @@ jobs:
 
       # https://github.com/marketplace/actions/docker-login
       - name: Login to GHCR
-        if: github.event_name != 'pull_request' && inputs.ghcr-enable
+        if: github.event_name != 'pull_request' && inputs.ghcr-enable && inputs.cosign-sign-enable
         uses: docker/login-action@v3.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: sign image
+      - name: Sign Image
         if: github.event_name != 'pull_request' && inputs.cosign-sign-enable
         run: |
           cosign sign -y -r --key env://COSIGN_KEY \
@@ -107,7 +119,7 @@ jobs:
           COSIGN_KEY: ${{ secrets.cosign-key }}
           COSIGN_PASSWORD: ${{ secrets.cosign-password }}
 
-      - name: verify image
+      - name: Verify Image
         if: github.event_name != 'pull_request' && inputs.cosign-verify-enable
         run: |
           printf '%s' "${COSIGN_PUBLIC_KEY}" > cosign.pub
@@ -118,9 +130,10 @@ jobs:
           COSIGN_PUBLIC_KEY: ${{ vars.COSIGN_PUB }}
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
-      - name: upload public key
+      - name: Upload Public Key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
         uses: actions/upload-artifact@v4
+        id: upload
         with:
           name: cosign.pub
           path: cosign.pub
