@@ -26,8 +26,8 @@ jobs:
       dockerhub-enable: false
       push: false
       load: true
-      provenance: true
-      sbom: true
+      provenance: false
+      sbom: false
       image: ${{ github.repository }}
 
   scan:
