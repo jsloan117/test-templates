@@ -42,7 +42,7 @@ on:
 
       artifact_name:
         description: uploaded artifact name
-        default: github.ref_name
+        default: ${{ github.ref_name }}
         required: false
         type: string
 
