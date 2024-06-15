@@ -77,7 +77,10 @@ permissions: {}
 jobs:
   scan:
     runs-on: ubuntu-latest
-    permissions: {}
+    permissions:
+      actions: read
+      contents: read
+      packages: write
 
     outputs:
       publickey-artifact-id: ${{ steps.upload.outputs.artifact-id }}
