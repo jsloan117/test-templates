@@ -46,6 +46,7 @@ jobs:
     permissions:
       actions: read
       contents: read
+      packages: write
 
     if: github.event_name != 'pull_request'
 
