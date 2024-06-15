@@ -28,7 +28,7 @@ jobs:
       # load: true
       provenance: false
       sbom: false
-      image: ${{ github.repository }}
+      image: ghcr.io/${{ github.repository }}
 
   scan:
     permissions:
