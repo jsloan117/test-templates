@@ -34,8 +34,7 @@ jobs:
       # load: true
       provenance: false
       sbom: false
-      image: ghcr.io/jsloan117/test-templates
-      # image: ghcr.io/${{ github.repository }}
+      image: ghcr.io/${{ github.repository }}
 
   scan:
     permissions:
