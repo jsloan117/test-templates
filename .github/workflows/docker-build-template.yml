@@ -201,6 +201,7 @@ jobs:
           install: true
           version: latest
           platforms: ${{ inputs.platforms }}
+          cache-binary: ${{ github.event_name != 'pull_request' }}
 
       # https://github.com/marketplace/actions/docker-metadata-action
       - name: Docker Metadata
