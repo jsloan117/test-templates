@@ -103,7 +103,7 @@ jobs:
           sarif_file: ${{ steps.scan.outputs.sarif }}
           wait-for-processing: true
 
-      - name: Set Sarif Report artifact variable
+      - name: Set Sarif artifact name
         run: |
           echo "artifact_name=$(echo ${artifact_name} | sed -e 's|/|-|g' -e 's|:|_|g').sarif" >> $GITHUB_ENV
         env:
@@ -115,7 +115,6 @@ jobs:
         id: upload
         with:
           name: ${{ env.artifact_name }}
-          # name: ${{ inputs.artifact_name }}
           path: ${{ steps.scan.outputs.sarif }}
           if-no-files-found: ${{ inputs.if-no-files-found }}
           overwrite: ${{ inputs.artifact_overwrite }}
