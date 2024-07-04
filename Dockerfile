@@ -2,6 +2,7 @@ FROM alpine:3.20
 
 RUN echo "*** updating system ***" \
     && apk update \
+    && apk upgrade \
     && echo "*** installing packages ***" \
     && apk --no-cache add bash \
     && echo "*** cleanup ***" \
