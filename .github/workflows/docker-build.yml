@@ -3,9 +3,9 @@ name: container image builder
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    # branches:
+    #   - main
+    #   - dev
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
