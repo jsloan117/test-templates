@@ -25,7 +25,6 @@
             default_bump: patch
             github_token: ${{ secrets.GITHUB_TOKEN }}
             tag_prefix: v
-            dry_run: true
   
         # https://github.com/marketplace/actions/create-release
         # https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
@@ -36,3 +35,4 @@
             name: Release ${{ steps.tag_version.outputs.new_tag }}
             tag: ${{ steps.tag_version.outputs.new_tag }}
             token: ${{ secrets.GITHUB_TOKEN }}
+
