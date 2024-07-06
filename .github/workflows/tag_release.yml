@@ -11,14 +11,15 @@ on:
 jobs:
   tag-release:
     permissions:
+      actions: write
       contents: write
     runs-on: ubuntu-latest
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_PAT }}
+        # with:
+        #   token: ${{ secrets.GH_PAT }}
 
       # https://github.com/marketplace/actions/github-tag
       # https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#type
@@ -27,7 +28,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           default_bump: patch
-          github_token: ${{ secrets.GH_PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           tag_prefix: v
           create_annotated_tag: true
 
@@ -39,6 +40,6 @@ jobs:
           generateReleaseNotes: true
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           tag: ${{ steps.tag_version.outputs.new_tag }}
-          token: ${{ secrets.GH_PAT }}
-          # token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
