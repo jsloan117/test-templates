@@ -1,0 +1,36 @@
+---
+# https://github.com/marketplace/actions/labeler
+
+build:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.sh'
+      - Dockerfile*
+      - docker-compose.yml
+      - .dockerignore
+
+ci/cd:
+  - changed-files:
+    - any-glob-to-any-file:
+      - .github/workflows/*
+      - .github/dependabot.yml
+      - .github/labeler.yml
+      - .github/mergify.yml
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - README.md
+      - mkdocs.yml
+      - docs/*
+
+formatters/linters:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.sh'
+      - .editorconfig
+      - .hadolint.yaml
+      - .yamllint.yml
+      - .prettierignore
+      - .prettierrc.yml
+
