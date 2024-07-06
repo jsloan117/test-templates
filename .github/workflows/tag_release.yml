@@ -11,7 +11,6 @@ on:
 jobs:
   tag-release:
     permissions:
-      actions: write
       contents: write
     runs-on: ubuntu-latest
     steps:
@@ -40,6 +39,6 @@ jobs:
           generateReleaseNotes: true
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           tag: ${{ steps.tag_version.outputs.new_tag }}
-          # token: ${{ secrets.GH_PAT }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
 
