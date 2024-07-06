@@ -11,9 +11,8 @@ on:
 jobs:
   tag-release:
     runs-on: ubuntu-latest
-    permissions: write-all
-    # permissions:
-    #   contents: write
+    permissions:
+      contents: write
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -39,6 +38,5 @@ jobs:
           generateReleaseNotes: true
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           tag: ${{ steps.tag_version.outputs.new_tag }}
-          # token: ${{ secrets.GH_PAT }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
 
