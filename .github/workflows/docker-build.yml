@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - dev
-      # - main
-    # tags:
-    #   - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
       - dev
@@ -36,8 +33,6 @@ jobs:
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
     with:
       dockerhub-enable: false
-      push: true
-      # load: true
       provenance: false
       sbom: false
       image: ghcr.io/${{ github.repository }}
