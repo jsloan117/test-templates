@@ -16,6 +16,10 @@ name: container image builder
 on:
   release:
     types: released
+  pull_request:
+    branches:
+      - dev
+      - main
 
 concurrency:
   # group: ${{ github.workflow }}-${{ github.ref }}
