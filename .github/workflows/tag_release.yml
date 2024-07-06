@@ -10,15 +10,15 @@ on:
 
 jobs:
   tag-release:
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
+    permissions: write-all
+    # permissions:
+    #   contents: write
+
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
         uses: actions/checkout@v4
-        # with:
-        #   token: ${{ secrets.GH_PAT }}
 
       # https://github.com/marketplace/actions/github-tag
       # https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#type
@@ -39,6 +39,6 @@ jobs:
           generateReleaseNotes: true
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           tag: ${{ steps.tag_version.outputs.new_tag }}
-          token: ${{ secrets.GH_PAT }}
-          # token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
