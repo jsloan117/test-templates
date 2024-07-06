@@ -16,3 +16,4 @@ It should trigger when a release is created, and when PRs are created/updated
 
 The only time a container image should be pushed to a registry is when a release occurs or if the branch is dev.
 
+
