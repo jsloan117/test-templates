@@ -1,25 +1,19 @@
 ---
 name: container image builder
 
-# on:
-#   push:
-#     # branches:
-#     #   - main
-#     #   - dev
-#     tags:
-#       - 'v[0-9]+.[0-9]+.[0-9]+'
-#   pull_request:
-#     branches:
-#       - main
-#       - dev
-
 on:
-  release:
-    types: released
+  push:
+    branches:
+      - dev
+      - main
+    # tags:
+    #   - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
       - dev
       - main
+  release:
+    types: released
 
 concurrency:
   # group: ${{ github.workflow }}-${{ github.ref }}
