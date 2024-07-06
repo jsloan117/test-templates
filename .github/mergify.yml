@@ -6,7 +6,8 @@ pull_request_rules:
     conditions:
       - base=dev
       - author~=^dependabot(|-preview)\[bot\]$
-      - check-success=build
+      - check-success=build/build, scan/scan
+      - check-skipped=sign
       - -conflict
       - label=automerge
     actions:

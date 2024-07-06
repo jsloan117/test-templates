@@ -39,5 +39,5 @@ jobs:
           generateReleaseNotes: true
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           tag: ${{ steps.tag_version.outputs.new_tag }}
-          token: ${{ secrets.GH_PAT }} # using PAT to allow WF to trigger release for docker-build.yml
+          token: ${{ secrets.GH_PAT }} # using PAT to allow workflow to trigger release for docker-build.yml
 

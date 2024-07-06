@@ -72,6 +72,19 @@ on:
       #   type: string
       # type=schedule,pattern={{date 'YYYYMMDD'}}
 
+      # tags:
+      #   # https://github.com/marketplace/actions/docker-metadata-action#tags-input
+      #   description: use docker-metadata action to create tags from a key-value pair list in csv format
+      #   default: |
+      #     type=semver,pattern=v{{version}}
+      #     type=semver,pattern=v{{major}}.{{minor}}
+      #     type=semver,pattern=v{{major}}
+      #     type=ref,event=tag
+      #     type=ref,event=pr
+      #     type=raw,value=latest,enable={{is_default_branch}}
+      #   required: false
+      #   type: string
+
       tags:
         # https://github.com/marketplace/actions/docker-metadata-action#tags-input
         description: use docker-metadata action to create tags from a key-value pair list in csv format
@@ -79,9 +92,8 @@ on:
           type=semver,pattern=v{{version}}
           type=semver,pattern=v{{major}}.{{minor}}
           type=semver,pattern=v{{major}}
-          type=ref,event=tag
           type=ref,event=pr
-          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=dev,enable=${{ github.ref == format('refs/heads/{0}', 'dev') }}
         required: false
         type: string
 
