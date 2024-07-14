@@ -18,6 +18,6 @@ jobs:
       - name: Delete Untagged
         uses: camargo/delete-untagged-action@v1
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ secrets.PKG_CLEANUP }}
           personal-account: true
 
