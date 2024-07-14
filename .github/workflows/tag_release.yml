@@ -7,8 +7,8 @@ on:
     branches:
       - main
   # daily updates
-  # schedule:
-  #   - cron: '5 12 * * *'
+  schedule:
+    - cron: '10 0 * * *'
 
 permissions: {}
 

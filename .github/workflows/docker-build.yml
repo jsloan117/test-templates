@@ -26,7 +26,6 @@ jobs:
       packages: write
 
     uses: jsloan117/test-templates/.github/workflows/docker-build-template.yml@main
-    # uses: ./.github/workflows/docker-build-template.yml
     secrets:
       dockerhub-username: ${{ github.actor }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -43,7 +42,6 @@ jobs:
       security-events: write
 
     uses: jsloan117/test-templates/.github/workflows/scan.yml@main
-    # uses: ./.github/workflows/scan.yml
     needs: build
     with:
       sbom-file: ${{ needs.build.outputs.sbom-artifact-name }}
@@ -57,7 +55,6 @@ jobs:
     if: github.event_name != 'pull_request'
 
     uses: jsloan117/test-templates/.github/workflows/sign.yml@main
-    # uses: ./.github/workflows/sign.yml
     needs: build
     secrets:
       cosign-key: ${{ secrets.COSIGN_KEY }}
