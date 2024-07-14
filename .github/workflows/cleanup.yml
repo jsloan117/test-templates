@@ -15,7 +15,7 @@ jobs:
       # https://github.com/marketplace/actions/delete-untagged
       - name: Delete Untagged
         # uses: camargo/delete-untagged-action@v1
-        uses: jsloan117/delete-untagged-action@node20
+        uses: jsloan117/delete-untagged-action@v1.0.1
         with:
           github-token: ${{ secrets.PKG_CLEANUP }}
           personal-account: true
