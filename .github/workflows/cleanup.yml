@@ -7,15 +7,12 @@ name: Delete Untagged Container Images
 
 on:
   workflow_dispatch:
-    inputs:
-      package_name:
-        description: 'The name of the package to delete'
-        required: true
+
+permissions: {}
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
-    permissions: {}
     steps:
       # https://github.com/marketplace/actions/delete-untagged
       - name: Delete Untagged
@@ -23,11 +20,4 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
           personal-account: true
-        # with:
-        #   token: ${{ secrets.GH_PAT }}
-        #   owner_type: user
-        #   repository: ${{ github.repository }}
-        #   repository_owner: ${{ github.repository_owner }}
-        #   untagged_only: true
-        #   except_untagged_multiplatform: true
 
