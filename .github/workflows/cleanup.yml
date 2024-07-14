@@ -6,6 +6,8 @@ name: Delete Untagged Container Images
 #     - cron: '10 */1 * * *' # yamllint disable-line rule:quoted-strings
 
 on:
+  schedule:
+    - cron: '10 */1 * * *' # yamllint disable-line rule:quoted-strings 
   workflow_dispatch:
 
 permissions: {}
