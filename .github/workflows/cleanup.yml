@@ -3,7 +3,7 @@ name: delete untagged
 
 on:
   schedule:
-    - cron: '10 */1 * * *' # yamllint disable-line rule:quoted-strings 
+    - cron: '5 0 * * *' # yamllint disable-line rule:quoted-strings 
 
 permissions: {}
 
