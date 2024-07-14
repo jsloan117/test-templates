@@ -1,5 +1,5 @@
 ---
-name: Pull Request Labeler
+name: pull request labeler
 
 on:
   - pull_request_target

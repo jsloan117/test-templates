@@ -1,5 +1,5 @@
 ---
-name: Tag and Release
+name: tag and release
 # https://github.com/orgs/community/discussions/27194
 
 on:
