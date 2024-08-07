@@ -90,7 +90,7 @@ jobs:
       # https://github.com/marketplace/actions/cosign-installer
       - name: Install Cosign
         if: (github.event_name != 'pull_request' && inputs.cosign-sign-enable) || (github.event_name != 'pull_request' && inputs.cosign-verify-enable)
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v3.6.0
 
       # https://github.com/marketplace/actions/docker-login
       - name: Login to DockerHub
