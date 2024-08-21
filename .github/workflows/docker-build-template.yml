@@ -253,7 +253,7 @@ jobs:
 
       # https://github.com/marketplace/actions/anchore-sbom-action
       - name: Anchore SBOM Action
-        uses: anchore/sbom-action@v0.17.1
+        uses: anchore/sbom-action@v0.17.2
         id: sbom
         with:
           image: ${{ inputs.image }}
