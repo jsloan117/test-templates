@@ -86,7 +86,7 @@ jobs:
 
       # https://github.com/marketplace/actions/anchore-container-scan
       - name: Anchore Container Scan
-        uses: anchore/scan-action@v5.0.0
+        uses: anchore/scan-action@v5.0.1
         id: scan
         with:
           sbom: ${{ steps.dlsbom.outputs.download-path }}/${{ inputs.sbom-file }}
