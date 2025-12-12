@@ -137,7 +137,7 @@ jobs:
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: Upload Public Key
         if: github.event_name != 'pull_request' && inputs.cosign-upload-key
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         id: upload
         with:
           name: cosign.pub
